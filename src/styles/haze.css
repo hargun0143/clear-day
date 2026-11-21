@@ -1,0 +1,63 @@
+@keyframes haze-drift-1 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(8vw, 6vh, 0) scale(1.15);
+  }
+  100% {
+    transform: translate3d(-6vw, -4vh, 0) scale(0.95);
+  }
+}
+
+@keyframes haze-drift-2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-7vw, 9vh, 0) scale(0.9);
+  }
+  100% {
+    transform: translate3d(5vw, -6vh, 0) scale(1.1);
+  }
+}
+
+@keyframes haze-drift-3 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(6vw, -8vh, 0) scale(1.1);
+  }
+  100% {
+    transform: translate3d(-5vw, 5vh, 0) scale(0.92);
+  }
+}
+
+.haze-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(90px);
+  will-change: transform;
+  pointer-events: none;
+}
+
+.haze-blob-1 {
+  animation: haze-drift-1 45s ease-in-out infinite alternate;
+}
+
+.haze-blob-2 {
+  animation: haze-drift-2 52s ease-in-out infinite alternate;
+}
+
+.haze-blob-3 {
+  animation: haze-drift-3 60s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .haze-blob-1,
+  .haze-blob-2,
+  .haze-blob-3 {
+    animation: none !important;
+  }
+}

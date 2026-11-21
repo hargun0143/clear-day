@@ -1,0 +1,146 @@
+@property --shiny-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes shiny-rotate {
+  to {
+    --shiny-angle: 360deg;
+  }
+}
+
+.shiny-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  font-family: inherit;
+  font-weight: 500;
+  user-select: none;
+  cursor: pointer;
+  transition:
+    opacity 0.2s ease,
+    transform 0.1s ease,
+    box-shadow 0.25s ease,
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.shiny-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.shiny-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none !important;
+  animation: none !important;
+}
+
+.shiny-btn-md {
+  height: 52px;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  font-size: 0.9375rem;
+}
+
+.shiny-btn-sm {
+  height: 42px;
+  padding-left: 1.125rem;
+  padding-right: 1.125rem;
+  font-size: 0.875rem;
+}
+
+.shiny-btn-sm::after {
+  content: "";
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  min-height: 44px;
+}
+
+.shiny-btn-primary {
+  --shiny-angle: 0deg;
+  background:
+    padding-box linear-gradient(#0c1218, #0c1218),
+    border-box
+      conic-gradient(
+        from var(--shiny-angle),
+        transparent 0deg,
+        transparent 225deg,
+        #2dd4bf 250deg,
+        #d5fff8 292.5deg,
+        #2dd4bf 335deg,
+        transparent 360deg
+      );
+  border: 2px solid transparent;
+  color: #f1f4f7;
+}
+
+.shiny-btn-primary:hover:not(:disabled),
+.shiny-btn-primary:focus-visible:not(:disabled) {
+  animation: shiny-rotate 3s linear infinite;
+  box-shadow: 0 0 24px rgba(45, 212, 191, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shiny-btn-primary:hover:not(:disabled),
+  .shiny-btn-primary:focus-visible:not(:disabled) {
+    animation: none !important;
+  }
+}
+
+.shiny-btn-glass {
+  background:
+    linear-gradient(
+      150deg,
+      rgba(255, 255, 255, 0.15),
+      rgba(255, 255, 255, 0.02) 38%,
+      rgba(255, 255, 255, 0.055)
+    ),
+    rgba(16, 20, 28, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.17);
+  box-shadow:
+    inset 1px 1px 1px rgba(255, 255, 255, 0.32),
+    inset -1px -1px 1px rgba(0, 0, 0, 0.35),
+    0 12px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: #f1f4f7;
+}
+
+.shiny-btn-glass:hover:not(:disabled) {
+  background:
+    linear-gradient(
+      150deg,
+      rgba(255, 255, 255, 0.22),
+      rgba(255, 255, 255, 0.04) 38%,
+      rgba(255, 255, 255, 0.08)
+    ),
+    rgba(20, 26, 36, 0.6);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .shiny-btn-glass {
+    background: #121821;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+.shiny-btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #9ea9b6;
+}
+
+.shiny-btn-ghost:hover:not(:disabled) {
+  color: #f1f4f7;
+  background: rgba(255, 255, 255, 0.05);
+}
