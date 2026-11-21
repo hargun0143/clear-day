@@ -1,7 +1,8 @@
 export const THEME_COLORS = {
   bg: "#080B10",
   ink: "#F1F4F7",
-  muted: "#9EA9B6",
+  inkMuted: "#9EA9B6",
+  muted: "rgba(255, 255, 255, 0.08)",
   teal: "#2DD4BF",
   tealSoft: "#8CF0E2",
   amber: "#E8A14A",

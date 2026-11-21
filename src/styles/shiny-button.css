@@ -137,7 +137,7 @@
 .shiny-btn-ghost {
   background: transparent;
   border: 1px solid transparent;
-  color: #9ea9b6;
+  color: var(--color-ink-muted, #9ea9b6);
 }
 
 .shiny-btn-ghost:hover:not(:disabled) {

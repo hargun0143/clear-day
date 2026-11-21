@@ -48,7 +48,7 @@ export const HowItWorksDialog: FC<HowItWorksDialogProps> = ({
         </ol>
 
         <div className="mt-6 rounded-2xl bg-white/[0.04] p-4 border border-white/10">
-          <p className="text-xs leading-relaxed text-muted sm:text-sm">
+          <p className="text-xs leading-relaxed text-ink-muted sm:text-sm">
             {HOW_IT_WORKS_NOTE}
           </p>
           <p className="mt-2.5 text-xs font-semibold tracking-wide uppercase text-amber">

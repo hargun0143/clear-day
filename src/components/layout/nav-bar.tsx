@@ -36,7 +36,7 @@ export const NavBar: FC<NavBarProps> = ({
           {NAV_LABELS.howItWorks}
         </ShinyButton>
 
-        <label className="flex cursor-pointer select-none items-center gap-2.5 text-sm font-medium text-muted">
+        <label className="flex cursor-pointer select-none items-center gap-2.5 text-sm font-medium text-ink-muted">
           <span>{NAV_LABELS.sampleData}</span>
           <Switch checked={sampleMode} onCheckedChange={onSampleModeChange} />
         </label>
