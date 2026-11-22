@@ -19,10 +19,13 @@ export interface FactSheet {
   indoorSmoking: boolean;
   hasPurifier: boolean;
   hasAC: boolean;
+  hasExhaust: boolean;
   cookingWithBiomass: boolean;
   highOutdoorHours: boolean;
+  mobilityId: string;
   mobilityLabel: string;
   roleLabel: string;
+  budgetId: string | null;
   budgetLabel: string | null;
   roleSpecificAnswerLabel: string;
 }

@@ -4,25 +4,9 @@ import { getMobilityOptions } from "../../../src/constants/questionnaire/mobilit
 import { BUDGET_OPTIONS } from "../../../src/constants/questionnaire/options.js";
 import { getRoleHabitOptions } from "../../../src/constants/questionnaire/role-habits.js";
 import { ROLES } from "../../../src/constants/questionnaire/roles.js";
-import type {
-  QuestionOption,
-  QuestionnaireAnswers,
-} from "../../../src/utils/questionnaire/types.js";
+import type { QuestionnaireAnswers } from "../../../src/utils/questionnaire/types.js";
 import type { FactSheet, PlanAqiInput } from "./fact-sheet-types.js";
-
-function getOptionLabel(
-  options: readonly QuestionOption[],
-  idOrIds?: string | string[]
-): string {
-  if (!idOrIds) return "";
-  if (Array.isArray(idOrIds)) {
-    return idOrIds
-      .map((id) => options.find((o) => o.id === id)?.label ?? id)
-      .filter(Boolean)
-      .join(", ");
-  }
-  return options.find((o) => o.id === idOrIds)?.label ?? idOrIds;
-}
+import { getOptionLabel, toStringList } from "./label-helper.js";
 
 export function buildFactSheet(
   cityId: string,
@@ -39,11 +23,9 @@ export function buildFactSheet(
 
   const city = CITIES.find((c) => c.id === cityId);
   const cityName = city ? city.name : cityId;
-
   const band =
     AQI_BANDS.find((b) => aqiInput.value >= b.min && aqiInput.value <= b.max) ??
     AQI_BANDS[0]!;
-
   const mainPollutant = aqiInput.mainPollutant || "PM2.5";
   const dataSourceLabel = aqiInput.isModelled
     ? "Modelled estimate (Open-Meteo / CAMS)"
@@ -52,46 +34,47 @@ export function buildFactSheet(
       : "CPCB via data.gov.in";
 
   const isUnder18 = answers["age"] === "under-18";
-  const careAnswers = Array.isArray(answers["care"])
-    ? (answers["care"] as string[])
-    : [];
-  const vulnerableHome =
-    careAnswers.length > 0 && !careAnswers.includes("none");
-  const hasBreathingOrHeartCondition = careAnswers.includes(
-    "breathing-or-heart-condition"
-  );
+  const careAnswers = toStringList(answers["care"]);
+  const careHasNone = careAnswers.includes("none");
+  const vulnerableHome = careAnswers.length > 0 && !careHasNone;
+  const hasBreathingOrHeartCondition =
+    !careHasNone && careAnswers.includes("breathing-or-heart-condition");
 
-  const homeSetupAnswers = Array.isArray(answers["home-setup"])
-    ? (answers["home-setup"] as string[])
-    : [];
-  const indoorSmoking = homeSetupAnswers.includes("indoor-smoking");
-  const hasPurifier = homeSetupAnswers.includes("air-purifier");
-  const hasAC = homeSetupAnswers.includes("ac");
+  const homeSetupAnswers = toStringList(answers["home-setup"]);
+  const homeHasNone = homeSetupAnswers.includes("none");
+  const indoorSmoking =
+    !homeHasNone && homeSetupAnswers.includes("indoor-smoking");
+  const hasPurifier = !homeHasNone && homeSetupAnswers.includes("air-purifier");
+  const hasAC = !homeHasNone && homeSetupAnswers.includes("ac");
+  const hasExhaust =
+    !homeHasNone && homeSetupAnswers.includes("exhaust-or-chimney");
 
-  const mobilityVal = answers["mobility"];
+  const mobilityVal =
+    typeof answers["mobility"] === "string" ? answers["mobility"] : "";
+  const mobilityId = mobilityVal;
   const cookingWithBiomass = mobilityVal === "wood-coal-or-biomass";
   const highOutdoorHours = mobilityVal === "over-5";
 
-  const mobilityOpts = getMobilityOptions(answers);
   const mobilityLabel = getOptionLabel(
-    mobilityOpts,
-    typeof mobilityVal === "string" ? mobilityVal : ""
+    getMobilityOptions(answers),
+    mobilityVal
   );
-
   const roleVal = typeof answers["role"] === "string" ? answers["role"] : "";
   const roleLabel = getOptionLabel(ROLES, roleVal);
 
+  const budgetVal =
+    typeof answers["budget"] === "string" ? answers["budget"] : "";
+  const budgetId = isUnder18 ? null : budgetVal || null;
   const budgetLabel = isUnder18
     ? null
-    : getOptionLabel(
-        BUDGET_OPTIONS,
-        typeof answers["budget"] === "string" ? answers["budget"] : ""
-      );
+    : getOptionLabel(BUDGET_OPTIONS, budgetVal);
 
-  const habitOpts = getRoleHabitOptions(answers);
   const habitVal =
     typeof answers["role-habit"] === "string" ? answers["role-habit"] : "";
-  const roleSpecificAnswerLabel = getOptionLabel(habitOpts, habitVal);
+  const roleSpecificAnswerLabel = getOptionLabel(
+    getRoleHabitOptions(answers),
+    habitVal
+  );
 
   return {
     cityName,
@@ -106,10 +89,13 @@ export function buildFactSheet(
     indoorSmoking,
     hasPurifier,
     hasAC,
+    hasExhaust,
     cookingWithBiomass,
     highOutdoorHours,
+    mobilityId,
     mobilityLabel,
     roleLabel,
+    budgetId,
     budgetLabel,
     roleSpecificAnswerLabel,
   };

@@ -1,41 +1,45 @@
 import type { GeneratedPlan } from "./plan-schema.js";
 
 export const EXAMPLE_PLAN: GeneratedPlan = {
-  headline: "Managing your day with Moderate air quality in Delhi",
+  headline: "Office routine with moderate outdoor exposure in Delhi",
   todaySummary:
-    "Air quality is in the Moderate band today. Keep strenuous outdoor exertion limited, shift high-energy workouts indoors, and ventilate during afternoon hours.",
+    "Air quality is in the Moderate band today. For an office worker commuting via transit with family at home, pace outdoor travel around peak hours and maintain a clean indoor baseline.",
+  goodHabits: [
+    "Using public transit for commuting",
+    "Maintaining a smoke-free home environment",
+  ],
   dailyPlan: [
     {
       slot: "Morning",
       actions: [
-        "Keep windows closed during peak morning traffic hours",
-        "Perform light stretching indoors rather than outdoor running",
+        "Plan indoor morning exercise instead of outdoor jogging",
+        "Take an earlier transit route before traffic peaks",
       ],
-      why: "Particulate levels typically peak in early morning when atmospheric dispersion is lowest.",
+      why: "Particulate levels typically peak in early morning near major roadways.",
     },
     {
       slot: "Afternoon",
       actions: [
-        "Briefly ventilate the home if outdoor air clears up",
-        "Run kitchen exhaust while preparing lunch",
+        "Take scheduled rest breaks inside during midday heat",
+        "Prepare meals with steady ventilation",
       ],
-      why: "Solar heating improves vertical air mixing and reduces ambient ground-level concentrations.",
+      why: "Solar heating improves vertical air mixing during midday hours.",
     },
     {
       slot: "Evening",
       actions: [
-        "Wear an N95 mask if commuting through heavy traffic",
-        "Close external doors before dust and vehicle exhaust settle",
+        "Wear an N95 mask if walking through busy transit hubs",
+        "Wrap up errands early before nightfall",
       ],
       why: "Evening commutes create localized spikes of fine vehicle emissions along roadways.",
     },
     {
       slot: "Night",
       actions: [
-        "Run your air purifier or DIY box-fan filter in the bedroom",
-        "Keep bedroom windows and doors closed overnight",
+        "Establish a restful bedroom environment with sealed doors",
+        "Keep evening activities calm and indoors",
       ],
-      why: "Uninterrupted clean air overnight helps rest respiratory passages after daytime exposure.",
+      why: "Uninterrupted rest helps recovery after daytime particulate exposure.",
     },
   ],
   indoorAir: {

@@ -1,3 +1,21 @@
+import {
+  ALL_KNOWLEDGE_TOPICS,
+  IMPACT_TOPICS,
+  INDOOR_TOPICS,
+  SWAP_TOPICS,
+  type KnowledgeTopic,
+  type TopicSection,
+} from "./topics/topic-types.js";
+
+export {
+  ALL_KNOWLEDGE_TOPICS,
+  IMPACT_TOPICS,
+  INDOOR_TOPICS,
+  SWAP_TOPICS,
+  type KnowledgeTopic,
+  type TopicSection,
+};
+
 export interface DtoFixedFilterInfo {
   steps: readonly string[];
   materials: readonly string[];
@@ -26,16 +44,10 @@ export const DIY_BOX_FAN_FILTER: DtoFixedFilterInfo = {
   ],
 } as const;
 
-export const INDOOR_AIR_FACTS: readonly string[] = [
-  "Keep windows and doors securely closed when outdoor AQI is elevated.",
-  "Avoid all indoor smoking and burning incense or mosquito coils.",
-  "Use wet mopping rather than dry sweeping to prevent stirring up settled dust.",
-  "Ventilate the home briefly only when outdoor air pollution is at its lowest daily level.",
-] as const;
+export const INDOOR_AIR_FACTS: readonly string[] = INDOOR_TOPICS.map(
+  (t) => t.detail
+);
 
-export const LOW_EMISSION_SWAPS: readonly string[] = [
-  "Choose walking or cycling for short neighborhood trips where air permits.",
-  "Use metro or public buses instead of driving personal motorized vehicles.",
-  "Avoid vehicle idling when stopped in traffic or waiting.",
-  "Never burn garden leaves, municipal solid waste, or open garbage.",
-] as const;
+export const LOW_EMISSION_SWAPS: readonly string[] = SWAP_TOPICS.map(
+  (t) => t.detail
+);

@@ -31,6 +31,7 @@ export const PlanImpactItemSchema = z.object({
 export const GeneratedPlanSchema = z.object({
   headline: z.string().max(80),
   todaySummary: z.string().max(240),
+  goodHabits: z.array(z.string()).max(3).optional(),
   dailyPlan: z.array(PlanDailySlotSchema).length(4),
   indoorAir: PlanIndoorAirSchema,
   lowEmissionChoices: z.array(PlanLowEmissionChoiceSchema).max(4),
@@ -55,6 +56,9 @@ export function postProcessPlan(
   }
   if (typeof obj.todaySummary === "string" && obj.todaySummary.length > 240) {
     obj.todaySummary = obj.todaySummary.slice(0, 240).trim();
+  }
+  if (Array.isArray(obj.goodHabits)) {
+    obj.goodHabits = obj.goodHabits.slice(0, 3);
   }
 
   if (isUnder18) {

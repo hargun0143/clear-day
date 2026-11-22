@@ -23,9 +23,78 @@ describe("buildFactSheet", () => {
     expect(sheet.vulnerableHome).toBe(true);
     expect(sheet.hasPurifier).toBe(true);
     expect(sheet.hasAC).toBe(true);
+    expect(sheet.hasExhaust).toBe(false);
     expect(sheet.roleLabel).toBe("Office worker");
     expect(sheet.mobilityLabel).toBe("Bus or metro");
     expect(sheet.budgetLabel).toBe("Under ₹1,000");
+  });
+
+  it("tests each home-setup option on its own and none", () => {
+    // 1. air-purifier on its own
+    const purifierOnly = buildFactSheet(
+      "delhi",
+      { value: 150 },
+      { ...baseAnswers, "home-setup": ["air-purifier"] }
+    );
+    expect(purifierOnly.hasPurifier).toBe(true);
+    expect(purifierOnly.hasAC).toBe(false);
+    expect(purifierOnly.indoorSmoking).toBe(false);
+    expect(purifierOnly.hasExhaust).toBe(false);
+
+    // 2. ac on its own
+    const acOnly = buildFactSheet(
+      "delhi",
+      { value: 150 },
+      { ...baseAnswers, "home-setup": ["ac"] }
+    );
+    expect(acOnly.hasPurifier).toBe(false);
+    expect(acOnly.hasAC).toBe(true);
+    expect(acOnly.indoorSmoking).toBe(false);
+    expect(acOnly.hasExhaust).toBe(false);
+
+    // 3. cooler-or-fan on its own
+    const coolerOnly = buildFactSheet(
+      "delhi",
+      { value: 150 },
+      { ...baseAnswers, "home-setup": ["cooler-or-fan"] }
+    );
+    expect(coolerOnly.hasPurifier).toBe(false);
+    expect(coolerOnly.hasAC).toBe(false);
+    expect(coolerOnly.indoorSmoking).toBe(false);
+    expect(coolerOnly.hasExhaust).toBe(false);
+
+    // 4. exhaust-or-chimney on its own
+    const exhaustOnly = buildFactSheet(
+      "delhi",
+      { value: 150 },
+      { ...baseAnswers, "home-setup": ["exhaust-or-chimney"] }
+    );
+    expect(exhaustOnly.hasPurifier).toBe(false);
+    expect(exhaustOnly.hasAC).toBe(false);
+    expect(exhaustOnly.indoorSmoking).toBe(false);
+    expect(exhaustOnly.hasExhaust).toBe(true);
+
+    // 5. indoor-smoking on its own
+    const smokingOnly = buildFactSheet(
+      "delhi",
+      { value: 150 },
+      { ...baseAnswers, "home-setup": ["indoor-smoking"] }
+    );
+    expect(smokingOnly.hasPurifier).toBe(false);
+    expect(smokingOnly.hasAC).toBe(false);
+    expect(smokingOnly.indoorSmoking).toBe(true);
+    expect(smokingOnly.hasExhaust).toBe(false);
+
+    // 6. none sets all of them false
+    const noneOnly = buildFactSheet(
+      "delhi",
+      { value: 150 },
+      { ...baseAnswers, "home-setup": ["none"] }
+    );
+    expect(noneOnly.hasPurifier).toBe(false);
+    expect(noneOnly.hasAC).toBe(false);
+    expect(noneOnly.indoorSmoking).toBe(false);
+    expect(noneOnly.hasExhaust).toBe(false);
   });
 
   it("sets under-18 flags properly and sets budgetLabel to null", () => {

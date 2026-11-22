@@ -11,6 +11,12 @@ export const GEMINI_RESPONSE_SCHEMA = {
       description:
         "Concise summary of routine recommendations for today (max 240 chars).",
     },
+    goodHabits: {
+      type: "ARRAY",
+      items: { type: "STRING" },
+      description:
+        "Up to 3 positive clean-air habits the user is already doing.",
+    },
     dailyPlan: {
       type: "ARRAY",
       description:

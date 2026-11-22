@@ -1,27 +1,24 @@
 import type { FactSheet } from "./fact-sheet-types.js";
-import { GEMINI_RESPONSE_SCHEMA } from "./gemini-schema-def.js";
+import { findRepeatedAdvice } from "./find-repeated-advice.js";
+import {
+  buildRequestBody,
+  fetchGemini,
+  GEMINI_MAX_OUTPUT_TOKENS,
+  GEMINI_TEMPERATURE,
+  GEMINI_TIMEOUT_MS,
+  type InjectedFetch,
+} from "./gemini-fetch.js";
 import { type GeneratedPlan, postProcessPlan } from "./plan-schema.js";
-import { buildPlanPrompt } from "./prompts/plan-prompt-v1.js";
+import { buildPlanPrompt } from "./prompts/plan-prompt.js";
 
 export const GEMINI_DEFAULT_MODEL = "gemini-2.5-flash";
-export const GEMINI_TIMEOUT_MS = 25000;
-export const GEMINI_MAX_OUTPUT_TOKENS = 2048;
-export const GEMINI_TEMPERATURE = 0.5;
+export { GEMINI_TIMEOUT_MS, GEMINI_MAX_OUTPUT_TOKENS, GEMINI_TEMPERATURE };
+export type { InjectedFetch };
 
 export type GeminiCallResult =
   { success: true; plan: GeneratedPlan } | { success: false; error: string };
 
-export type InjectedFetch = typeof fetch;
-
-interface GeminiCandidate {
-  content?: {
-    parts?: Array<{ text?: string }>;
-  };
-}
-
-interface GeminiApiResponse {
-  candidates?: GeminiCandidate[];
-}
+const RETRY_DELAY_MS = 400;
 
 export async function callGeminiPlan(
   factSheet: FactSheet,
@@ -36,79 +33,57 @@ export async function callGeminiPlan(
   const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
   const { systemInstruction, userContent } = buildPlanPrompt(factSheet);
 
-  const requestBody = {
-    system_instruction: {
-      parts: [{ text: systemInstruction }],
-    },
-    contents: [
-      {
-        role: "user",
-        parts: [{ text: userContent }],
-      },
-    ],
-    generationConfig: {
-      temperature: GEMINI_TEMPERATURE,
-      maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
-      responseMimeType: "application/json",
-      responseSchema: GEMINI_RESPONSE_SCHEMA,
-    },
-  };
+  let successfulPlan: GeneratedPlan | null = null;
 
   for (let attempt = 0; attempt < 2; attempt++) {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), GEMINI_TIMEOUT_MS);
+    let bodyContent = userContent;
+    if (attempt === 1 && successfulPlan !== null) {
+      const repeats = findRepeatedAdvice(successfulPlan);
+      bodyContent = `${userContent}\n\nREMOVE REPEATED ADVICE: ${repeats
+        .map((p) => `"${p.a}"`)
+        .join(", ")}`;
+    }
 
-    try {
-      const response = await fetchFn(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-goog-api-key": apiKey,
-        },
-        body: JSON.stringify(requestBody),
-        signal: controller.signal,
-      });
+    const requestBody = buildRequestBody(systemInstruction, bodyContent);
+    const result = await fetchGemini(url, apiKey, requestBody, fetchFn);
 
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        if (response.status === 429 || response.status >= 500) {
-          if (attempt === 0) {
-            await new Promise((r) => setTimeout(r, 400));
-            continue;
-          }
-        }
-        return { success: false, error: `Upstream error: ${response.status}` };
-      }
-
-      const json = (await response.json()) as GeminiApiResponse;
-      const rawText = json?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-      if (!rawText || typeof rawText !== "string") {
-        if (attempt === 0) {
-          await new Promise((r) => setTimeout(r, 400));
-          continue;
-        }
-        return {
-          success: false,
-          error: "Empty or invalid response from Gemini",
-        };
-      }
-
-      const parsedJson = JSON.parse(rawText) as unknown;
-      const plan = postProcessPlan(parsedJson, factSheet.isUnder18);
-      return { success: true, plan };
-    } catch {
-      clearTimeout(timeoutId);
+    if (!result.ok) {
       if (attempt === 0) {
-        await new Promise((r) => setTimeout(r, 400));
+        await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
         continue;
       }
       return {
         success: false,
-        error: "Network error or invalid JSON from Gemini",
+        error: result.status
+          ? `Upstream error: ${result.status}`
+          : "Network error or invalid JSON from Gemini",
       };
     }
+
+    let plan: GeneratedPlan;
+    try {
+      const parsedJson = JSON.parse(result.text!) as unknown;
+      plan = postProcessPlan(parsedJson, factSheet.isUnder18);
+    } catch {
+      if (attempt === 0) {
+        await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+        continue;
+      }
+      return { success: false, error: "Empty or invalid response from Gemini" };
+    }
+
+    const repeats = findRepeatedAdvice(plan);
+    if (repeats.length > 0 && attempt === 0) {
+      successfulPlan = plan;
+      await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+      continue;
+    }
+
+    return { success: true, plan };
+  }
+
+  if (successfulPlan !== null) {
+    return { success: true, plan: successfulPlan };
   }
 
   return { success: false, error: "Failed to generate plan after retry" };

@@ -3,6 +3,7 @@ import type { GeneratedPlan } from "../../../api/_lib/plan/plan-schema.js";
 import { AQI_BANDS } from "@/constants/aqi-bands";
 import { CITIES } from "@/constants/cities";
 import { DailyPlanGrid } from "@/components/plan/daily-plan-grid";
+import { GoodHabitsCard } from "@/components/plan/good-habits-card";
 import { ImpactSection } from "@/components/plan/impact-section";
 import { IndoorAirSection } from "@/components/plan/indoor-air-section";
 import { PlanSummaryPanel } from "@/components/plan/plan-summary-panel";
@@ -71,6 +72,7 @@ export const PlanPage: FC<PlanPageProps> = ({
         </div>
 
         <div className="mt-6 flex flex-col gap-6 lg:mt-0">
+          <GoodHabitsCard goodHabits={plan.goodHabits} />
           <DailyPlanGrid dailyPlan={plan.dailyPlan} />
           <IndoorAirSection indoorAir={plan.indoorAir} />
           <SwapsSection choices={plan.lowEmissionChoices} />

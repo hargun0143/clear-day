@@ -11,7 +11,7 @@ import type {
   PlanHandlerResult,
   PlanRequestPayload,
 } from "./_lib/plan/handler-types.js";
-import { PROMPT_VERSION } from "./_lib/plan/prompts/plan-prompt-v1.js";
+import { PROMPT_VERSION } from "./_lib/plan/prompts/plan-prompt.js";
 
 export async function processPlanRequest(
   method: string | undefined,
@@ -45,6 +45,12 @@ export async function processPlanRequest(
     factSheet = buildFactSheet(cityId, aqi, answers);
   } catch {
     return { status: 400, headers, body: { error: "Invalid parameters" } };
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    console.log(
+      `[plan-flags] isUnder18=${factSheet.isUnder18} vulnerableHome=${factSheet.vulnerableHome} hasBreathingOrHeartCondition=${factSheet.hasBreathingOrHeartCondition} indoorSmoking=${factSheet.indoorSmoking} hasPurifier=${factSheet.hasPurifier} hasAC=${factSheet.hasAC} hasExhaust=${factSheet.hasExhaust} cookingWithBiomass=${factSheet.cookingWithBiomass} highOutdoorHours=${factSheet.highOutdoorHours}`
+    );
   }
 
   const model = process.env.GEMINI_MODEL || GEMINI_DEFAULT_MODEL;
