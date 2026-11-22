@@ -1,6 +1,6 @@
 import { useMemo, type FC } from "react";
 import { PlanLoading } from "@/components/plan/plan-loading";
-import { PlanView } from "@/components/plan/plan-view";
+import { PlanPage } from "@/components/plan/plan-page";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { CITIES } from "@/constants/cities";
 import { usePlan } from "@/hooks/use-plan";
@@ -24,19 +24,15 @@ export const PlanScreen: FC<PlanScreenProps> = ({
   isModelled,
   onStartOver,
 }) => {
-  const cityName = useMemo(() => {
-    return CITIES.find((c) => c.id === result.cityId)?.name ?? result.cityId;
-  }, [result.cityId]);
+  const cityName = useMemo(
+    () => CITIES.find((c) => c.id === result.cityId)?.name ?? result.cityId,
+    [result.cityId]
+  );
 
   const payload: PlanRequestPayload = useMemo(
     () => ({
       cityId: result.cityId,
-      aqi: {
-        value: aqiValue,
-        mainPollutant,
-        source,
-        isModelled,
-      },
+      aqi: { value: aqiValue, mainPollutant, source, isModelled },
       answers: result.answers,
     }),
     [result, aqiValue, mainPollutant, source, isModelled]
@@ -70,6 +66,14 @@ export const PlanScreen: FC<PlanScreenProps> = ({
   }
 
   return (
-    <PlanView plan={data.plan} meta={data.meta} onStartOver={onStartOver} />
+    <PlanPage
+      plan={data.plan}
+      meta={data.meta}
+      aqiValue={aqiValue}
+      cityId={result.cityId}
+      source={source}
+      isModelled={isModelled}
+      onStartOver={onStartOver}
+    />
   );
 };

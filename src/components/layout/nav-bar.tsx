@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import { useEffect, useRef, type FC } from "react";
 import { Wind } from "lucide-react";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { Switch } from "@/components/ui/switch";
@@ -18,9 +18,23 @@ export const NavBar: FC<NavBarProps> = ({
   onSampleModeChange,
   onLogoClick,
 }) => {
+  const headerRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    const onScroll = () => {
+      header.dataset["scrolled"] = window.scrollY > 4 ? "true" : "false";
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <header
-      className={`fixed ${NAV_DIMENSIONS.topOffsetClass} left-1/2 z-40 flex ${NAV_DIMENSIONS.heightClass} w-[calc(100%-3rem)] ${NAV_DIMENSIONS.maxWidthClass} -translate-x-1/2 items-center justify-between px-5 glass`}
+      ref={headerRef}
+      data-scrolled="false"
+      className={`fixed ${NAV_DIMENSIONS.topOffsetClass} left-1/2 z-40 flex ${NAV_DIMENSIONS.heightClass} w-[calc(100%-3rem)] ${NAV_DIMENSIONS.maxWidthClass} -translate-x-1/2 items-center justify-between px-5 glass nav-scrolled`}
     >
       <button
         type="button"

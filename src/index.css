@@ -62,6 +62,11 @@
   --radius: 0.625rem;
 }
 
+html {
+  /* clear the fixed nav bar (top-6=24px + h-[60px]=60px + 4px gap) */
+  scroll-padding-top: 88px;
+}
+
 body {
   font-family: var(--font-sans);
   font-weight: 500;
@@ -123,6 +128,20 @@ body {
     background: #121821;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+}
+
+/* Nav bar becomes slightly more opaque while scrolled */
+@media not (prefers-reduced-transparency: reduce) {
+  .nav-scrolled[data-scrolled="true"] {
+    background:
+      linear-gradient(
+        150deg,
+        rgba(255, 255, 255, 0.18),
+        rgba(255, 255, 255, 0.04) 38%,
+        rgba(255, 255, 255, 0.07)
+      ),
+      rgba(16, 20, 28, 0.72);
   }
 }
 
