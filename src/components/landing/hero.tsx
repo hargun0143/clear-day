@@ -16,6 +16,7 @@ export interface HeroProps {
   onSelectCity: (cityId: string) => void;
   onStart: () => void;
   sampleMode?: boolean;
+  cityPickerError?: string | null;
 }
 
 export const Hero: FC<HeroProps> = ({
@@ -23,6 +24,7 @@ export const Hero: FC<HeroProps> = ({
   onSelectCity,
   onStart,
   sampleMode = false,
+  cityPickerError = null,
 }) => {
   const [prevCityId, setPrevCityId] = useState(selectedCityId);
   const [manualAqi, setManualAqi] = useState<number | null>(null);
@@ -79,10 +81,23 @@ export const Hero: FC<HeroProps> = ({
           </p>
         </div>
 
-        <CityPicker
-          selectedCityId={selectedCityId}
-          onSelectCity={onSelectCity}
-        />
+        <div className="space-y-1.5">
+          <CityPicker
+            selectedCityId={selectedCityId}
+            onSelectCity={onSelectCity}
+            triggerId="city-picker-trigger"
+            isError={Boolean(cityPickerError)}
+          />
+          {cityPickerError && (
+            <p
+              id="city-picker-error"
+              className="px-2 text-xs font-medium text-amber"
+              role="alert"
+            >
+              {cityPickerError}
+            </p>
+          )}
+        </div>
 
         {selectedCity && (
           <div className="space-y-4 pt-2">

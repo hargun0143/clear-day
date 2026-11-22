@@ -18,6 +18,8 @@ import { CITIES, type City } from "@/constants/cities";
 export interface CityPickerProps {
   selectedCityId: string | null;
   onSelectCity: (cityId: string) => void;
+  triggerId?: string;
+  isError?: boolean;
 }
 
 const POPULAR_CITIES = CITIES.filter((c) => c.popular);
@@ -28,6 +30,8 @@ const ALL_CITIES_SORTED = [...CITIES].sort((a, b) =>
 export const CityPicker: FC<CityPickerProps> = ({
   selectedCityId,
   onSelectCity,
+  triggerId = "city-picker-trigger",
+  isError = false,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -58,10 +62,13 @@ export const CityPicker: FC<CityPickerProps> = ({
       <PopoverTrigger asChild>
         <button
           type="button"
+          id={triggerId}
           aria-label="City"
           role="combobox"
           aria-expanded={open}
-          className="glass flex h-[54px] w-full cursor-pointer items-center justify-between rounded-full px-5 text-left text-sm transition-colors hover:border-white/30 focus-visible:outline-2 focus-visible:outline-white"
+          className={`glass flex h-[54px] w-full cursor-pointer items-center justify-between rounded-full px-5 text-left text-sm transition-colors hover:border-white/30 focus-visible:outline-2 focus-visible:outline-teal ${
+            isError ? "border-amber/80 ring-1 ring-amber/80" : ""
+          }`}
         >
           <div className="flex min-w-0 items-center gap-3">
             <Search className="h-5 w-5 shrink-0 text-ink-muted" />

@@ -6,36 +6,90 @@ import { SampleBanner } from "@/components/layout/sample-banner";
 import { Hero } from "@/components/landing/hero";
 import { ImpactSection } from "@/components/landing/impact-section";
 import { SiteFooter } from "@/components/landing/site-footer";
-import { LANDING_PALETTE } from "@/constants/palettes";
+import { PlanPendingScreen } from "@/components/questionnaire/plan-pending-screen";
+import { QuestionnaireScreen } from "@/components/questionnaire/questionnaire-screen";
+import { CALM_PALETTE, LANDING_PALETTE } from "@/constants/palettes";
+import type { QuestionnaireResult } from "@/utils/questionnaire/types";
+
+export type AppView = "landing" | "questionnaire" | "plan-pending";
 
 export function App() {
+  const [view, setView] = useState<AppView>("landing");
   const [sampleMode, setSampleMode] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCityId, setSelectedCityId] = useState<string | null>(null);
+  const [cityPickerError, setCityPickerError] = useState<string | null>(null);
+  const [questionnaireResult, setQuestionnaireResult] =
+    useState<QuestionnaireResult | null>(null);
 
   const handleStart = () => {
-    // No-op for now as questionnaire is built in a later phase.
+    if (!selectedCityId) {
+      setCityPickerError("Choose your city first");
+      const trigger = document.getElementById("city-picker-trigger");
+      trigger?.focus();
+      return;
+    }
+    setCityPickerError(null);
+    setView("questionnaire");
   };
+
+  const handleCitySelect = (cityId: string) => {
+    setSelectedCityId(cityId);
+    setCityPickerError(null);
+  };
+
+  const handleQuestionnaireComplete = (result: QuestionnaireResult) => {
+    setQuestionnaireResult(result);
+    setView("plan-pending");
+  };
+
+  const handleStartOver = () => {
+    setQuestionnaireResult(null);
+    setView("landing");
+  };
+
+  const currentPalette = view === "landing" ? LANDING_PALETTE : CALM_PALETTE;
 
   return (
     <div className="flex min-h-screen flex-col">
-      <HazeBackground palette={LANDING_PALETTE} />
+      <HazeBackground palette={currentPalette} />
       <NavBar
         onHowItWorks={() => setDialogOpen(true)}
         sampleMode={sampleMode}
         onSampleModeChange={setSampleMode}
+        onLogoClick={() => setView("landing")}
       />
       <SampleBanner visible={sampleMode} />
       <HowItWorksDialog open={dialogOpen} onOpenChange={setDialogOpen} />
 
       <main className="relative flex-1 pt-24 sm:pt-32">
-        <Hero
-          selectedCityId={selectedCityId}
-          onSelectCity={setSelectedCityId}
-          onStart={handleStart}
-          sampleMode={sampleMode}
-        />
-        <ImpactSection />
+        {view === "landing" && (
+          <>
+            <Hero
+              selectedCityId={selectedCityId}
+              onSelectCity={handleCitySelect}
+              onStart={handleStart}
+              sampleMode={sampleMode}
+              cityPickerError={cityPickerError}
+            />
+            <ImpactSection />
+          </>
+        )}
+
+        {view === "questionnaire" && selectedCityId && (
+          <QuestionnaireScreen
+            cityId={selectedCityId}
+            onBackToLanding={() => setView("landing")}
+            onComplete={handleQuestionnaireComplete}
+          />
+        )}
+
+        {view === "plan-pending" && questionnaireResult && (
+          <PlanPendingScreen
+            result={questionnaireResult}
+            onStartOver={handleStartOver}
+          />
+        )}
       </main>
 
       <SiteFooter />

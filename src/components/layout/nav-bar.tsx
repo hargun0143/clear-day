@@ -9,18 +9,25 @@ export interface NavBarProps {
   onHowItWorks: () => void;
   sampleMode: boolean;
   onSampleModeChange: (val: boolean) => void;
+  onLogoClick?: () => void;
 }
 
 export const NavBar: FC<NavBarProps> = ({
   onHowItWorks,
   sampleMode,
   onSampleModeChange,
+  onLogoClick,
 }) => {
   return (
     <header
       className={`fixed ${NAV_DIMENSIONS.topOffsetClass} left-1/2 z-40 flex ${NAV_DIMENSIONS.heightClass} w-[calc(100%-3rem)] ${NAV_DIMENSIONS.maxWidthClass} -translate-x-1/2 items-center justify-between px-5 glass`}
     >
-      <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={onLogoClick}
+        className="flex cursor-pointer items-center gap-3 text-left focus-visible:outline-2 focus-visible:outline-teal"
+        aria-label="Return to home"
+      >
         <div
           className={`${NAV_DIMENSIONS.iconCircleClass} flex items-center justify-center rounded-full bg-cream text-bg shadow-sm`}
         >
@@ -29,7 +36,7 @@ export const NavBar: FC<NavBarProps> = ({
         <span className="text-base font-semibold tracking-tight text-ink">
           {APP_NAME}
         </span>
-      </div>
+      </button>
 
       <div className="flex items-center gap-4">
         <ShinyButton variant="glass" size="sm" onClick={onHowItWorks}>
