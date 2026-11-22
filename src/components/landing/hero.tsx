@@ -6,7 +6,10 @@ import { HeroIntro } from "@/components/landing/hero-intro";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { CITIES } from "@/constants/cities";
 import { useCityAqi } from "@/hooks/use-city-aqi";
-import { getSnapshotReading } from "@/utils/snapshot-reader";
+import {
+  getSnapshotCapturedAt,
+  getSnapshotReading,
+} from "@/utils/snapshot-reader";
 
 export interface HeroProps {
   selectedCityId: string | null;
@@ -56,9 +59,15 @@ export const Hero: FC<HeroProps> = ({
       ? activeReading.stationCount
       : undefined;
 
+  const snapshotCapturedAt = sampleMode ? getSnapshotCapturedAt() : null;
+
   return (
     <section className="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-10 px-5 pt-12 pb-16 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:pt-16 lg:pb-24">
-      <HeroIntro onStart={onStart} />
+      <HeroIntro
+        onStart={onStart}
+        sampleMode={sampleMode}
+        capturedAt={snapshotCapturedAt}
+      />
 
       <div className="glass flex w-full flex-col space-y-5 rounded-[28px] p-6 sm:p-8">
         <div>
@@ -81,6 +90,7 @@ export const Hero: FC<HeroProps> = ({
               value={displayValue}
               isManual={isManual}
               source={activeReading?.source}
+              sampleMode={sampleMode}
               mainPollutant={activeReading?.dominantPollutant}
               stationsCount={stationsCount}
               updatedTime={activeReading?.updatedAt}

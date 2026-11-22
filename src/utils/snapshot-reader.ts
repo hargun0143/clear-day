@@ -1,5 +1,6 @@
 import rawSnapshot from "@/data/sample-snapshot.json";
 import type { CityAqiResult } from "@/services/aqi-client";
+import { formatCapturedTime } from "@/utils/aqi-status-text";
 
 export interface SnapshotData {
   capturedAt: string | null;
@@ -24,24 +25,4 @@ export function getSnapshotReading(cityId: string): CityAqiResult | null {
   return readSnapshotEntry(snapshot, cityId);
 }
 
-export function formatSnapshotTime(
-  isoString: string | null | undefined
-): string | null {
-  if (!isoString) return null;
-  try {
-    const d = new Date(isoString);
-    if (Number.isNaN(d.getTime())) return null;
-    const formatted = d.toLocaleString("en-IN", {
-      timeZone: "Asia/Kolkata",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-    return `${formatted} IST`;
-  } catch {
-    return null;
-  }
-}
+export const formatSnapshotTime = formatCapturedTime;

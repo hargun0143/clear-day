@@ -36,9 +36,17 @@ export const NavBar: FC<NavBarProps> = ({
           {NAV_LABELS.howItWorks}
         </ShinyButton>
 
-        <label className="flex cursor-pointer select-none items-center gap-2.5 text-sm font-medium text-ink-muted">
+        <label
+          htmlFor="sample-mode-switch"
+          className="flex min-h-[44px] cursor-pointer select-none items-center gap-2.5 text-sm text-ink-muted"
+        >
           <span>{NAV_LABELS.sampleData}</span>
-          <Switch checked={sampleMode} onCheckedChange={onSampleModeChange} />
+          <Switch
+            id="sample-mode-switch"
+            aria-label="Use saved sample data"
+            checked={sampleMode}
+            onCheckedChange={onSampleModeChange}
+          />
         </label>
       </div>
     </header>

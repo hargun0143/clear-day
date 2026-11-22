@@ -49,9 +49,11 @@ describe("snapshot-reader", () => {
     expect(formatted).toContain("13:00");
   });
 
-  it("reads default placeholder snapshot without error", () => {
-    // The initial snapshot file has null capturedAt and empty readings
-    expect(getSnapshotCapturedAt()).toBeNull();
-    expect(getSnapshotReading("delhi")).toBeNull();
+  it("reads real bundled snapshot file without error", () => {
+    const capturedAt = getSnapshotCapturedAt();
+    expect(typeof capturedAt === "string" || capturedAt === null).toBe(true);
+    const reading = getSnapshotReading("delhi");
+    expect(reading).not.toBeNull();
+    expect(reading?.cityId).toBe("delhi");
   });
 });

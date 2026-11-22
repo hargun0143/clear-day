@@ -1,17 +1,29 @@
-import type { FC } from "react";
+import { useMemo, type FC } from "react";
 import { ArrowRight } from "lucide-react";
 import { ShinyButton } from "@/components/ui/shiny-button";
+import { getStatusPill } from "@/utils/aqi-status-text";
 
 export interface HeroIntroProps {
   onStart: () => void;
+  sampleMode?: boolean;
+  capturedAt?: string | null;
 }
 
-export const HeroIntro: FC<HeroIntroProps> = ({ onStart }) => {
+export const HeroIntro: FC<HeroIntroProps> = ({
+  onStart,
+  sampleMode = false,
+  capturedAt = null,
+}) => {
+  const pill = useMemo(
+    () => getStatusPill(sampleMode, capturedAt),
+    [sampleMode, capturedAt]
+  );
+
   return (
     <div className="flex flex-col items-start space-y-6">
       <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1 text-xs font-medium text-ink/90">
-        <span className="h-2 w-2 rounded-full bg-teal" />
-        <span>Live CPCB readings · 23 Indian cities</span>
+        <span className={`h-2 w-2 rounded-full ${pill.dotColorClass}`} />
+        <span>{pill.text}</span>
       </div>
 
       <h1 className="text-5xl font-[650] leading-[0.98] tracking-[-0.05em] text-ink sm:text-6xl lg:text-[76px]">

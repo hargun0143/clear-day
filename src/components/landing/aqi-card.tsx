@@ -3,6 +3,7 @@ import { AqiCardError } from "@/components/landing/aqi-card-error";
 import { AqiGauge } from "@/components/landing/aqi-gauge";
 import { AQI_BANDS } from "@/constants/aqi-bands";
 import { getAqiBand } from "@/utils/aqi-category";
+import { getAqiCardSourceText } from "@/utils/aqi-status-text";
 
 export interface AqiCardProps {
   value?: number | null;
@@ -11,24 +12,12 @@ export interface AqiCardProps {
   updatedTime?: string;
   stationsCount?: number;
   source?: "cpcb" | "open-meteo" | "manual" | "sample";
+  sampleMode?: boolean;
   isManual?: boolean;
   isLoading?: boolean;
   error?: string | null;
   onRetry?: () => void;
   onManualSubmit?: (aqi: number) => void;
-}
-
-function formatTime(isoOrTime?: string): string {
-  if (!isoOrTime) return "--:--";
-  const d = new Date(isoOrTime);
-  if (!Number.isNaN(d.getTime())) {
-    return d.toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  }
-  return isoOrTime;
 }
 
 export const AqiCard: FC<AqiCardProps> = ({
@@ -38,6 +27,7 @@ export const AqiCard: FC<AqiCardProps> = ({
   updatedTime,
   stationsCount,
   source = "cpcb",
+  sampleMode = false,
   isManual = false,
   isLoading = false,
   error = null,
@@ -74,14 +64,13 @@ export const AqiCard: FC<AqiCardProps> = ({
 
   if (value === null || value === undefined) return null;
 
-  const timeLabel = formatTime(updatedTime);
-  const estimateLine = isManual
-    ? "Entered by you"
-    : source === "open-meteo"
-      ? `Modelled estimate (Open-Meteo / CAMS), not a station reading, updated ${timeLabel}`
-      : stationsCount !== undefined
-        ? `Estimate from ${stationsCount} CPCB station${stationsCount === 1 ? "" : "s"}, updated ${timeLabel}`
-        : `Updated ${timeLabel}`;
+  const estimateLine = getAqiCardSourceText({
+    sampleMode,
+    source,
+    isManual,
+    stationsCount,
+    updatedTime,
+  });
 
   return (
     <div className="flex flex-col items-center rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-center">
@@ -108,7 +97,8 @@ export const AqiCard: FC<AqiCardProps> = ({
             </a>
           </p>
         ) : (
-          !isManual && (
+          !isManual &&
+          !sampleMode && (
             <p className="text-[11px] opacity-80">
               Source: CPCB via data.gov.in
             </p>
