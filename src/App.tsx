@@ -33,6 +33,7 @@ export function App() {
           selectedCityId={selectedCityId}
           onSelectCity={setSelectedCityId}
           onStart={handleStart}
+          sampleMode={sampleMode}
         />
         <ImpactSection />
       </main>

@@ -20,6 +20,11 @@ export interface CityPickerProps {
   onSelectCity: (cityId: string) => void;
 }
 
+const POPULAR_CITIES = CITIES.filter((c) => c.popular);
+const ALL_CITIES_SORTED = [...CITIES].sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
+
 export const CityPicker: FC<CityPickerProps> = ({
   selectedCityId,
   onSelectCity,
@@ -31,16 +36,22 @@ export const CityPicker: FC<CityPickerProps> = ({
     [selectedCityId]
   );
 
-  const popularCities = useMemo(() => CITIES.filter((c) => c.popular), []);
-  const allCitiesSorted = useMemo(
-    () => [...CITIES].sort((a, b) => a.name.localeCompare(b.name)),
-    []
-  );
-
   const handleSelect = (city: City) => {
     onSelectCity(city.id);
     setOpen(false);
   };
+
+  const renderItem = (city: City, prefix: string) => (
+    <CommandItem
+      key={`${prefix}-${city.id}`}
+      value={`${city.name} ${city.state}`}
+      onSelect={() => handleSelect(city)}
+      className="city-picker-row flex cursor-pointer items-center justify-between px-3.5 py-2.5 text-sm"
+    >
+      <span className="font-semibold">{city.name}</span>
+      <span className="text-xs text-ink-muted">{city.state}</span>
+    </CommandItem>
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -90,34 +101,14 @@ export const CityPicker: FC<CityPickerProps> = ({
               heading="Popular"
               className="text-xs font-semibold text-ink-muted"
             >
-              {popularCities.map((city) => (
-                <CommandItem
-                  key={`popular-${city.id}`}
-                  value={`${city.name} ${city.state}`}
-                  onSelect={() => handleSelect(city)}
-                  className="city-picker-row flex cursor-pointer items-center justify-between px-3.5 py-2.5 text-sm"
-                >
-                  <span className="font-semibold">{city.name}</span>
-                  <span className="text-xs text-ink-muted">{city.state}</span>
-                </CommandItem>
-              ))}
+              {POPULAR_CITIES.map((c) => renderItem(c, "popular"))}
             </CommandGroup>
 
             <CommandGroup
               heading="All covered cities"
               className="text-xs font-semibold text-ink-muted"
             >
-              {allCitiesSorted.map((city) => (
-                <CommandItem
-                  key={`all-${city.id}`}
-                  value={`${city.name} ${city.state}`}
-                  onSelect={() => handleSelect(city)}
-                  className="city-picker-row flex cursor-pointer items-center justify-between px-3.5 py-2.5 text-sm"
-                >
-                  <span className="font-semibold">{city.name}</span>
-                  <span className="text-xs text-ink-muted">{city.state}</span>
-                </CommandItem>
-              ))}
+              {ALL_CITIES_SORTED.map((c) => renderItem(c, "all"))}
             </CommandGroup>
           </CommandList>
         </Command>

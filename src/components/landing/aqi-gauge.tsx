@@ -12,20 +12,15 @@ export const AqiGauge: FC<AqiGaugeProps> = ({ value }) => {
   const band = result?.band ?? AQI_BANDS[0];
   const beyondScale = result?.beyondScale ?? value > GAUGE_CONFIG.maxScaleValue;
 
-  const [displayValue, setDisplayValue] = useState(() => {
-    if (
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches
-    ) {
-      return value;
-    }
-    return 0;
-  });
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const [displayValue, setDisplayValue] = useState(() =>
+    prefersReducedMotion ? value : 0
+  );
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
-    }
+    if (prefersReducedMotion) return;
 
     let start: number | null = null;
     let animId: number;
@@ -36,14 +31,12 @@ export const AqiGauge: FC<AqiGaugeProps> = ({ value }) => {
       const progress = Math.min(elapsed / GAUGE_CONFIG.countUpDurationMs, 1);
       setDisplayValue(Math.round(progress * value));
 
-      if (progress < 1) {
-        animId = requestAnimationFrame(step);
-      }
+      if (progress < 1) animId = requestAnimationFrame(step);
     };
 
     animId = requestAnimationFrame(step);
     return () => cancelAnimationFrame(animId);
-  }, [value]);
+  }, [value, prefersReducedMotion]);
 
   const segments = useMemo(
     () =>
@@ -55,10 +48,10 @@ export const AqiGauge: FC<AqiGaugeProps> = ({ value }) => {
   );
 
   const clamped = Math.min(Math.max(value, 0), GAUGE_CONFIG.maxScaleValue);
-  const markerAngle = 180 - (clamped / GAUGE_CONFIG.maxScaleValue) * 180;
-  const markerRad = (markerAngle * Math.PI) / 180;
-  const markerX = GAUGE_CONFIG.cx + GAUGE_CONFIG.radius * Math.cos(markerRad);
-  const markerY = GAUGE_CONFIG.cy - GAUGE_CONFIG.radius * Math.sin(markerRad);
+  const rad =
+    (180 - (clamped / GAUGE_CONFIG.maxScaleValue) * 180) * (Math.PI / 180);
+  const markerX = GAUGE_CONFIG.cx + GAUGE_CONFIG.radius * Math.cos(rad);
+  const markerY = GAUGE_CONFIG.cy - GAUGE_CONFIG.radius * Math.sin(rad);
 
   return (
     <div

@@ -6,24 +6,30 @@ import { CityStrip } from "@/components/landing/city-strip";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { CITIES } from "@/constants/cities";
 import { getPlaceholderAqi } from "@/constants/placeholder-readings";
+import { useCityAqi } from "@/hooks/use-city-aqi";
 
 export interface HeroProps {
   selectedCityId: string | null;
   onSelectCity: (cityId: string) => void;
   onStart: () => void;
+  sampleMode?: boolean;
 }
 
 export const Hero: FC<HeroProps> = ({
   selectedCityId,
   onSelectCity,
   onStart,
+  sampleMode = false,
 }) => {
   const selectedCity = useMemo(
     () => CITIES.find((c) => c.id === selectedCityId) ?? null,
     [selectedCityId]
   );
 
-  const aqi = selectedCity ? getPlaceholderAqi(selectedCity.id) : null;
+  const placeholderAqi = selectedCity
+    ? getPlaceholderAqi(selectedCity.id)
+    : null;
+  const liveAqi = useCityAqi(sampleMode ? null : (selectedCity?.id ?? null));
 
   return (
     <section className="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-10 px-5 pt-12 pb-16 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:pt-16 lg:pb-24">
@@ -76,12 +82,24 @@ export const Hero: FC<HeroProps> = ({
           onSelectCity={onSelectCity}
         />
 
-        {selectedCity && aqi !== null && (
+        {selectedCity && (
           <div className="space-y-4 pt-2">
-            <AqiCard value={aqi} />
+            <AqiCard
+              value={sampleMode ? placeholderAqi : liveAqi.data?.aqi}
+              mainPollutant={liveAqi.data?.dominantPollutant}
+              stationsCount={liveAqi.data?.stationCount}
+              updatedTime={liveAqi.data?.updatedAt}
+              sourceText={liveAqi.data?.source}
+              isLoading={!sampleMode && liveAqi.status === "loading"}
+              error={
+                !sampleMode && liveAqi.status === "error" ? liveAqi.error : null
+              }
+              onRetry={liveAqi.retry}
+            />
             <CityStrip
               selectedCityId={selectedCity.id}
               onSelectCity={onSelectCity}
+              sampleMode={sampleMode}
             />
             <ShinyButton
               variant="primary"
