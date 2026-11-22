@@ -2,12 +2,15 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { getCityById } from "../src/constants/cities.js";
 import { computeCityAqi } from "./_lib/city-aqi.js";
 import { CACHE_CONTROL_HEADER } from "./_lib/cpcb-config.js";
-import type {
-  AqiErrorResponse,
-  CityAqiResult,
-  ParsedReading,
+import {
+  OPEN_METEO_LABEL,
+  OPEN_METEO_SOURCE,
+  type AqiErrorResponse,
+  type CityAqiResult,
+  type ParsedReading,
 } from "./_lib/cpcb-types.js";
 import { fetchCpcbRecords } from "./_lib/fetch-cpcb.js";
+import { fetchOpenMeteoAqi } from "./_lib/open-meteo.js";
 import { parseRecord } from "./_lib/parse-record.js";
 import { computeStationAqis } from "./_lib/station-aqi.js";
 
@@ -49,40 +52,54 @@ export async function processAqiRequest(
     return { status: 400, headers, body: { error: "invalid_city" } };
   }
 
-  if (!apiKey) {
-    return { status: 502, headers, body: { error: "upstream_error" } };
+  if (apiKey) {
+    try {
+      const fetchRes = await fetchCpcbRecords(
+        city.cpcbCity,
+        city.cpcbState,
+        apiKey,
+        { fetchFn, sleepFn }
+      );
+      if (fetchRes.ok) {
+        const readings = fetchRes.records
+          .map(parseRecord)
+          .filter((r): r is ParsedReading => r !== null);
+        const stations = computeStationAqis(readings, now);
+        const cityRes = computeCityAqi(city.id, stations);
+        if (cityRes.ok) return { status: 200, headers, body: cityRes.data };
+      }
+    } catch {
+      // Fall through to Open-Meteo fallback
+    }
   }
 
   try {
-    const fetchRes = await fetchCpcbRecords(
-      city.cpcbCity,
-      city.cpcbState,
-      apiKey,
-      { fetchFn, sleepFn }
-    );
-    if (!fetchRes.ok) {
-      return { status: 502, headers, body: { error: fetchRes.error } };
+    const meteoRes = await fetchOpenMeteoAqi(city.latitude, city.longitude, {
+      fetchFn,
+      sleepFn,
+    });
+    if (meteoRes.ok) {
+      const { aqi, dominantPollutant, updatedAt } = meteoRes.data;
+      return {
+        status: 200,
+        headers,
+        body: {
+          cityId: city.id,
+          aqi,
+          dominantPollutant,
+          updatedAt,
+          source: OPEN_METEO_SOURCE,
+          sourceLabel: OPEN_METEO_LABEL,
+          isModelled: true,
+          isEstimate: true,
+        },
+      };
     }
-
-    const readings: ParsedReading[] = [];
-    for (const record of fetchRes.records) {
-      const parsed = parseRecord(record);
-      if (parsed) {
-        readings.push(parsed);
-      }
-    }
-
-    const stations = computeStationAqis(readings, now);
-    const cityRes = computeCityAqi(city.id, stations);
-
-    if (!cityRes.ok) {
-      return { status: 502, headers, body: { error: cityRes.error } };
-    }
-
-    return { status: 200, headers, body: cityRes.data };
   } catch {
-    return { status: 502, headers, body: { error: "upstream_error" } };
+    // Fall through to 502
   }
+
+  return { status: 502, headers, body: { error: "no_data_available" } };
 }
 
 export default async function handler(
@@ -91,17 +108,16 @@ export default async function handler(
   },
   res: ServerResponse
 ): Promise<void> {
-  const url = new URL(req.url ?? "", "http://localhost");
-  const queryCity = req.query?.city;
-  const rawCity = Array.isArray(queryCity)
-    ? queryCity[0]
-    : (queryCity ?? url.searchParams.get("city") ?? undefined);
+  const q = req.query?.city;
+  const rawCity = Array.isArray(q)
+    ? q[0]
+    : (q ??
+      new URL(req.url ?? "", "http://localhost").searchParams.get("city") ??
+      undefined);
 
   const result = await processAqiRequest(rawCity);
-
   res.statusCode = result.status;
-  for (const [key, value] of Object.entries(result.headers)) {
+  for (const [key, value] of Object.entries(result.headers))
     res.setHeader(key, value);
-  }
   res.end(JSON.stringify(result.body));
 }

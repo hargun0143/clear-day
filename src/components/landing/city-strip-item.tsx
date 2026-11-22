@@ -1,9 +1,9 @@
 import { useMemo, type FC } from "react";
 import { AQI_BANDS } from "@/constants/aqi-bands";
 import type { City } from "@/constants/cities";
-import { getPlaceholderAqi } from "@/constants/placeholder-readings";
 import { useCityAqi } from "@/hooks/use-city-aqi";
 import { getAqiBand } from "@/utils/aqi-category";
+import { getSnapshotReading } from "@/utils/snapshot-reader";
 
 export interface CityStripItemProps {
   city: City;
@@ -18,16 +18,16 @@ export const CityStripItem: FC<CityStripItemProps> = ({
   sampleMode,
   onSelect,
 }) => {
-  const placeholderAqi = useMemo(() => getPlaceholderAqi(city.id), [city.id]);
+  const snapshotReading = useMemo(() => getSnapshotReading(city.id), [city.id]);
   const liveResult = useCityAqi(sampleMode ? null : city.id);
 
   const aqi = sampleMode
-    ? placeholderAqi
+    ? (snapshotReading?.aqi ?? null)
     : liveResult.status === "success" && liveResult.data
       ? liveResult.data.aqi
       : liveResult.status === "loading"
         ? null
-        : placeholderAqi;
+        : (snapshotReading?.aqi ?? null);
 
   const band = useMemo(() => {
     if (aqi === null) return AQI_BANDS[0];
@@ -50,7 +50,11 @@ export const CityStripItem: FC<CityStripItemProps> = ({
       </span>
       <div className="mt-1 flex items-center gap-1.5 text-[11px]">
         {aqi === null ? (
-          <span className="h-2 w-8 animate-pulse rounded bg-white/20" />
+          sampleMode ? (
+            <span className="text-[10px] text-ink-muted">No data</span>
+          ) : (
+            <span className="h-2 w-8 animate-pulse rounded bg-white/20" />
+          )
         ) : (
           <>
             <span

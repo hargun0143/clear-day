@@ -35,7 +35,7 @@ export interface StationAqi {
   updatedAt: Date;
 }
 
-export interface CityAqiResult {
+export interface CpcbCityAqiResult {
   cityId: string;
   aqi: number;
   stationCount: number;
@@ -45,7 +45,24 @@ export interface CityAqiResult {
   isEstimate: true;
 }
 
-export type AqiErrorCode = "invalid_city" | "no_fresh_data" | "upstream_error";
+export const OPEN_METEO_SOURCE = "open-meteo" as const;
+export const OPEN_METEO_LABEL = "Open-Meteo (CAMS model)" as const;
+
+export interface OpenMeteoCityAqiResult {
+  cityId: string;
+  aqi: number;
+  dominantPollutant: string;
+  updatedAt: string;
+  source: typeof OPEN_METEO_SOURCE;
+  sourceLabel: typeof OPEN_METEO_LABEL;
+  isModelled: true;
+  isEstimate: true;
+}
+
+export type CityAqiResult = CpcbCityAqiResult | OpenMeteoCityAqiResult;
+
+export type AqiErrorCode =
+  "invalid_city" | "no_fresh_data" | "upstream_error" | "no_data_available";
 
 export interface AqiErrorResponse {
   error: AqiErrorCode;

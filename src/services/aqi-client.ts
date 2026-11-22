@@ -1,12 +1,25 @@
-export interface CityAqiResult {
+export interface CpcbCityAqiResult {
   cityId: string;
   aqi: number;
   stationCount: number;
   dominantPollutant: string;
   updatedAt: string;
-  source: string;
-  isEstimate: boolean;
+  source: "cpcb";
+  isEstimate: true;
 }
+
+export interface OpenMeteoCityAqiResult {
+  cityId: string;
+  aqi: number;
+  dominantPollutant: string;
+  updatedAt: string;
+  source: "open-meteo";
+  sourceLabel: "Open-Meteo (CAMS model)";
+  isModelled: true;
+  isEstimate: true;
+}
+
+export type CityAqiResult = CpcbCityAqiResult | OpenMeteoCityAqiResult;
 
 export interface AqiErrorResponse {
   error: string;
@@ -24,8 +37,8 @@ export async function fetchCityAqi(
     let errorMsg = "Unable to fetch air quality data";
     try {
       const errData = (await response.json()) as AqiErrorResponse;
-      if (errData.error === "no_fresh_data") {
-        errorMsg = "No fresh CPCB station data available for this city";
+      if (errData.error === "no_data_available") {
+        errorMsg = "No fresh or modelled air quality data available";
       } else if (errData.error === "invalid_city") {
         errorMsg = "Selected city is not supported";
       }

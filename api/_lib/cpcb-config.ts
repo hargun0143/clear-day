@@ -14,6 +14,7 @@ export const STATION_MAX_AGE_HOURS = 3;
 export const STATION_MAX_AGE_MS = STATION_MAX_AGE_HOURS * 60 * 60 * 1000;
 
 export const KEY_POLLUTANTS = ["PM2.5", "PM10"] as const;
-export const CPCB_SOURCE = "CPCB via data.gov.in" as const;
+export const CPCB_SOURCE = "cpcb" as const;
+export const CPCB_LABEL = "CPCB via data.gov.in" as const;
 
 export const CACHE_CONTROL_HEADER = "s-maxage=300, stale-while-revalidate=300";

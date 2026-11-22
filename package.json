@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "format": "prettier --write .",
     "test": "vitest run --passWithNoTests",
+    "snapshot": "node scripts/capture-snapshot.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

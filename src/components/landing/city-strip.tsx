@@ -29,6 +29,8 @@ export const CityStrip: FC<CityStripProps> = ({
           popular: false,
           cpcbCity: id,
           cpcbState: "",
+          latitude: 0,
+          longitude: 0,
         }
       );
     });

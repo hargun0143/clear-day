@@ -1,0 +1,212 @@
+{
+  "capturedAt": "2026-11-22T08:19:12.203Z",
+  "readings": {
+    "delhi": {
+      "cityId": "delhi",
+      "aqi": 247,
+      "stationCount": 56,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "mumbai": {
+      "cityId": "mumbai",
+      "aqi": 149,
+      "stationCount": 25,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "bengaluru": {
+      "cityId": "bengaluru",
+      "aqi": 143,
+      "stationCount": 8,
+      "dominantPollutant": "PM10",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "kolkata": {
+      "cityId": "kolkata",
+      "aqi": 29,
+      "stationCount": 7,
+      "dominantPollutant": "CO",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "chennai": {
+      "cityId": "chennai",
+      "aqi": 186,
+      "stationCount": 5,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "hyderabad": {
+      "cityId": "hyderabad",
+      "aqi": 73,
+      "stationCount": 11,
+      "dominantPollutant": "PM10",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "pune": {
+      "cityId": "pune",
+      "aqi": 130,
+      "stationCount": 6,
+      "dominantPollutant": "PM10",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "ahmedabad": {
+      "cityId": "ahmedabad",
+      "aqi": 123,
+      "stationCount": 7,
+      "dominantPollutant": "PM10",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "jaipur": {
+      "cityId": "jaipur",
+      "aqi": 167,
+      "stationCount": 6,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "lucknow": {
+      "cityId": "lucknow",
+      "aqi": 92,
+      "stationCount": 5,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "patna": {
+      "cityId": "patna",
+      "aqi": 91,
+      "stationCount": 6,
+      "dominantPollutant": "CO",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "chandigarh": {
+      "cityId": "chandigarh",
+      "aqi": 95,
+      "stationCount": 3,
+      "dominantPollutant": "PM10",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "bhopal": {
+      "cityId": "bhopal",
+      "aqi": 171,
+      "stationCount": 3,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "kanpur": {
+      "cityId": "kanpur",
+      "aqi": 69,
+      "stationCount": 3,
+      "dominantPollutant": "PM10",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "varanasi": {
+      "cityId": "varanasi",
+      "aqi": 61,
+      "stationCount": 3,
+      "dominantPollutant": "PM10",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "gurugram": {
+      "cityId": "gurugram",
+      "aqi": 242,
+      "stationCount": 4,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "noida": {
+      "cityId": "noida",
+      "aqi": 206,
+      "stationCount": 7,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "ghaziabad": {
+      "cityId": "ghaziabad",
+      "aqi": 220,
+      "stationCount": 9,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "nagpur": {
+      "cityId": "nagpur",
+      "aqi": 123,
+      "stationCount": 4,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "visakhapatnam": {
+      "cityId": "visakhapatnam",
+      "aqi": 74,
+      "stationCount": 4,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "guwahati": {
+      "cityId": "guwahati",
+      "aqi": 94,
+      "stationCount": 4,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "indore": {
+      "cityId": "indore",
+      "aqi": 88,
+      "stationCount": 4,
+      "dominantPollutant": "PM2.5",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    },
+    "thiruvananthapuram": {
+      "cityId": "thiruvananthapuram",
+      "aqi": 97,
+      "stationCount": 1,
+      "dominantPollutant": "PM10",
+      "updatedAt": "2026-11-22T07:30:00.000Z",
+      "source": "cpcb",
+      "isEstimate": true
+    }
+  }
+}

@@ -5,6 +5,8 @@ export interface City {
   popular: boolean;
   cpcbCity: string;
   cpcbState: string;
+  latitude: number;
+  longitude: number;
 }
 
 export const CITIES: readonly City[] = [
@@ -15,6 +17,8 @@ export const CITIES: readonly City[] = [
     popular: true,
     cpcbCity: "Delhi",
     cpcbState: "Delhi",
+    latitude: 28.61,
+    longitude: 77.21,
   },
   {
     id: "mumbai",
@@ -23,6 +27,8 @@ export const CITIES: readonly City[] = [
     popular: true,
     cpcbCity: "Mumbai",
     cpcbState: "Maharashtra",
+    latitude: 19.08,
+    longitude: 72.88,
   },
   {
     id: "bengaluru",
@@ -31,6 +37,8 @@ export const CITIES: readonly City[] = [
     popular: true,
     cpcbCity: "Bengaluru",
     cpcbState: "Karnataka",
+    latitude: 12.97,
+    longitude: 77.59,
   },
   {
     id: "kolkata",
@@ -39,6 +47,8 @@ export const CITIES: readonly City[] = [
     popular: true,
     cpcbCity: "Kolkata",
     cpcbState: "West Bengal",
+    latitude: 22.57,
+    longitude: 88.36,
   },
   {
     id: "chennai",
@@ -47,6 +57,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Chennai",
     cpcbState: "Tamil Nadu",
+    latitude: 13.08,
+    longitude: 80.27,
   },
   {
     id: "hyderabad",
@@ -55,6 +67,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Hyderabad",
     cpcbState: "Telangana",
+    latitude: 17.39,
+    longitude: 78.49,
   },
   {
     id: "pune",
@@ -63,6 +77,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Pune",
     cpcbState: "Maharashtra",
+    latitude: 18.52,
+    longitude: 73.86,
   },
   {
     id: "ahmedabad",
@@ -71,6 +87,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Ahmedabad",
     cpcbState: "Gujarat",
+    latitude: 23.02,
+    longitude: 72.57,
   },
   {
     id: "jaipur",
@@ -79,6 +97,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Jaipur",
     cpcbState: "Rajasthan",
+    latitude: 26.91,
+    longitude: 75.79,
   },
   {
     id: "lucknow",
@@ -87,6 +107,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Lucknow",
     cpcbState: "Uttar Pradesh",
+    latitude: 26.85,
+    longitude: 80.95,
   },
   {
     id: "patna",
@@ -95,6 +117,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Patna",
     cpcbState: "Bihar",
+    latitude: 25.6,
+    longitude: 85.14,
   },
   {
     id: "chandigarh",
@@ -103,6 +127,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Chandigarh",
     cpcbState: "Chandigarh",
+    latitude: 30.73,
+    longitude: 76.78,
   },
   {
     id: "bhopal",
@@ -111,6 +137,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Bhopal",
     cpcbState: "Madhya Pradesh",
+    latitude: 23.26,
+    longitude: 77.41,
   },
   {
     id: "kanpur",
@@ -119,6 +147,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Kanpur",
     cpcbState: "Uttar Pradesh",
+    latitude: 26.45,
+    longitude: 80.33,
   },
   {
     id: "varanasi",
@@ -127,6 +157,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Varanasi",
     cpcbState: "Uttar Pradesh",
+    latitude: 25.32,
+    longitude: 82.97,
   },
   {
     id: "gurugram",
@@ -135,6 +167,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Gurugram",
     cpcbState: "Haryana",
+    latitude: 28.46,
+    longitude: 77.03,
   },
   {
     id: "noida",
@@ -143,6 +177,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Noida",
     cpcbState: "Uttar Pradesh",
+    latitude: 28.54,
+    longitude: 77.39,
   },
   {
     id: "ghaziabad",
@@ -151,6 +187,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Ghaziabad",
     cpcbState: "Uttar Pradesh",
+    latitude: 28.67,
+    longitude: 77.45,
   },
   {
     id: "nagpur",
@@ -159,6 +197,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Nagpur",
     cpcbState: "Maharashtra",
+    latitude: 21.15,
+    longitude: 79.09,
   },
   {
     id: "visakhapatnam",
@@ -167,6 +207,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Visakhapatnam",
     cpcbState: "Andhra Pradesh",
+    latitude: 17.69,
+    longitude: 83.22,
   },
   {
     id: "guwahati",
@@ -175,6 +217,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Guwahati",
     cpcbState: "Assam",
+    latitude: 26.14,
+    longitude: 91.74,
   },
   {
     id: "indore",
@@ -183,6 +227,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Indore",
     cpcbState: "Madhya Pradesh",
+    latitude: 22.72,
+    longitude: 75.86,
   },
   {
     id: "thiruvananthapuram",
@@ -191,6 +237,8 @@ export const CITIES: readonly City[] = [
     popular: false,
     cpcbCity: "Thiruvananthapuram",
     cpcbState: "Kerala",
+    latitude: 8.52,
+    longitude: 76.94,
   },
 ] as const;
 
