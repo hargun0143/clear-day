@@ -11,10 +11,17 @@ import {
   getSnapshotReading,
 } from "@/utils/snapshot-reader";
 
+export interface HeroActiveAqiInfo {
+  value: number;
+  mainPollutant?: string;
+  source?: string;
+  isModelled?: boolean;
+}
+
 export interface HeroProps {
   selectedCityId: string | null;
   onSelectCity: (cityId: string) => void;
-  onStart: () => void;
+  onStart: (activeAqi?: HeroActiveAqiInfo) => void;
   sampleMode?: boolean;
   cityPickerError?: string | null;
 }
@@ -63,10 +70,26 @@ export const Hero: FC<HeroProps> = ({
 
   const snapshotCapturedAt = sampleMode ? getSnapshotCapturedAt() : null;
 
+  const handleStartClick = () => {
+    if (typeof displayValue === "number") {
+      onStart({
+        value: displayValue,
+        mainPollutant: activeReading?.dominantPollutant,
+        source: activeReading?.source,
+        isModelled:
+          activeReading && "isModelled" in activeReading
+            ? Boolean(activeReading.isModelled)
+            : false,
+      });
+    } else {
+      onStart();
+    }
+  };
+
   return (
     <section className="mx-auto grid max-w-[1180px] grid-cols-1 items-center gap-10 px-5 pt-12 pb-16 sm:px-8 lg:grid-cols-2 lg:gap-16 lg:pt-16 lg:pb-24">
       <HeroIntro
-        onStart={onStart}
+        onStart={handleStartClick}
         sampleMode={sampleMode}
         capturedAt={snapshotCapturedAt}
       />
@@ -124,7 +147,7 @@ export const Hero: FC<HeroProps> = ({
             <ShinyButton
               variant="primary"
               size="md"
-              onClick={onStart}
+              onClick={handleStartClick}
               className="w-full font-semibold"
             >
               Continue with {selectedCity.name}

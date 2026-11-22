@@ -3,15 +3,15 @@ import { HazeBackground } from "@/components/layout/haze-background";
 import { HowItWorksDialog } from "@/components/layout/how-it-works-dialog";
 import { NavBar } from "@/components/layout/nav-bar";
 import { SampleBanner } from "@/components/layout/sample-banner";
-import { Hero } from "@/components/landing/hero";
+import { Hero, type HeroActiveAqiInfo } from "@/components/landing/hero";
 import { ImpactSection } from "@/components/landing/impact-section";
 import { SiteFooter } from "@/components/landing/site-footer";
-import { PlanPendingScreen } from "@/components/questionnaire/plan-pending-screen";
+import { PlanScreen } from "@/components/plan/plan-screen";
 import { QuestionnaireScreen } from "@/components/questionnaire/questionnaire-screen";
 import { CALM_PALETTE, LANDING_PALETTE } from "@/constants/palettes";
 import type { QuestionnaireResult } from "@/utils/questionnaire/types";
 
-export type AppView = "landing" | "questionnaire" | "plan-pending";
+export type AppView = "landing" | "questionnaire" | "plan";
 
 export function App() {
   const [view, setView] = useState<AppView>("landing");
@@ -19,15 +19,19 @@ export function App() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCityId, setSelectedCityId] = useState<string | null>(null);
   const [cityPickerError, setCityPickerError] = useState<string | null>(null);
+  const [activeAqi, setActiveAqi] = useState<HeroActiveAqiInfo | null>(null);
   const [questionnaireResult, setQuestionnaireResult] =
     useState<QuestionnaireResult | null>(null);
 
-  const handleStart = () => {
+  const handleStart = (aqiInfo?: HeroActiveAqiInfo) => {
     if (!selectedCityId) {
       setCityPickerError("Choose your city first");
       const trigger = document.getElementById("city-picker-trigger");
       trigger?.focus();
       return;
+    }
+    if (aqiInfo) {
+      setActiveAqi(aqiInfo);
     }
     setCityPickerError(null);
     setView("questionnaire");
@@ -40,7 +44,7 @@ export function App() {
 
   const handleQuestionnaireComplete = (result: QuestionnaireResult) => {
     setQuestionnaireResult(result);
-    setView("plan-pending");
+    setView("plan");
   };
 
   const handleStartOver = () => {
@@ -84,9 +88,13 @@ export function App() {
           />
         )}
 
-        {view === "plan-pending" && questionnaireResult && (
-          <PlanPendingScreen
+        {view === "plan" && questionnaireResult && (
+          <PlanScreen
             result={questionnaireResult}
+            aqiValue={activeAqi?.value ?? 150}
+            mainPollutant={activeAqi?.mainPollutant}
+            source={activeAqi?.source}
+            isModelled={activeAqi?.isModelled}
             onStartOver={handleStartOver}
           />
         )}
