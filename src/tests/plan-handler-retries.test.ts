@@ -27,8 +27,8 @@ describe("POST /api/plan handler retries", () => {
       ...EXAMPLE_PLAN,
       impact: [
         {
-          choice: "Keep windows closed during rush hours.",
-          effect: "Reduces indoor particulate load.",
+          factorId: "high-outdoor-hours",
+          effect: "Keep windows closed during rush hours.",
         },
       ],
     };
@@ -65,8 +65,8 @@ describe("POST /api/plan handler retries", () => {
       ...EXAMPLE_PLAN,
       impact: [
         {
-          choice: "Keep windows closed during rush hours.",
-          effect: "Reduces indoor particulate load.",
+          factorId: "high-outdoor-hours",
+          effect: "Keep windows closed during rush hours.",
         },
       ],
     };

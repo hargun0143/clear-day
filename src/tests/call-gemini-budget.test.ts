@@ -30,8 +30,8 @@ describe("callGeminiPlan retry budget", () => {
       ...EXAMPLE_PLAN,
       impact: [
         {
-          choice: "Keep windows closed during rush hours.",
-          effect: "Reduces indoor particulate accumulation.",
+          factorId: "high-outdoor-hours",
+          effect: "Keep windows closed during rush hours.",
         },
       ],
     };

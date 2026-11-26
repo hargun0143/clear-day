@@ -1,6 +1,12 @@
+import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { buildFactSheet } from "../../api/_lib/plan/build-fact-sheet.js";
-import { selectTopFactors } from "../../api/_lib/plan/topics/select-top-factors.js";
+import {
+  FACTOR_WEIGHTS,
+  selectTopFactors,
+} from "../../api/_lib/plan/topics/select-top-factors.js";
+import { ImpactSection } from "@/components/plan/impact-section";
+import { TOP_FACTOR_LABELS } from "@/constants/top-factors";
 import type { QuestionnaireAnswers } from "../utils/questionnaire/types.js";
 
 describe("selectTopFactors", () => {
@@ -65,5 +71,29 @@ describe("selectTopFactors", () => {
     expect(factors).toContain("no-exhaust-cooking");
     expect(factors[0]).toBe("high-outdoor-hours");
     expect(factors[1]).toBe("biomass-cooking");
+  });
+
+  it("maps every factor id in FACTOR_WEIGHTS and renders plain labels in UI", () => {
+    for (const factor of FACTOR_WEIGHTS) {
+      expect(TOP_FACTOR_LABELS[factor.id]).toBeDefined();
+      expect(TOP_FACTOR_LABELS[factor.id]!.length).toBeGreaterThan(0);
+    }
+    const html = renderToStaticMarkup(
+      <ImpactSection
+        impact={[
+          { factorId: "high-outdoor-hours", effect: "Lowers peak intake." },
+          {
+            factorId: "no-purifier-with-care",
+            effect: "Adds indoor protection.",
+          },
+        ]}
+      />
+    );
+    expect(html).toContain("Long hours outdoors");
+    expect(html).toContain(
+      "No air purifier with children or older adults at home"
+    );
+    expect(html).not.toContain("high-outdoor-hours");
+    expect(html).not.toContain("no-purifier-with-care");
   });
 });

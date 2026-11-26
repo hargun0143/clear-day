@@ -19,9 +19,18 @@ export function selectIndoorTopics(factSheet: FactSheet): KnowledgeTopic[] {
     selectedIds.push("indoor-smoking");
   }
 
-  // exhaust-or-chimney use (only if the home has one or cooking produces smoke)
-  if (factSheet.hasExhaust || factSheet.cookingWithBiomass) {
+  const cooks =
+    factSheet.cookingWithBiomass ||
+    factSheet.roleLabel.toLowerCase().includes("homemaker");
+
+  if (factSheet.hasExhaust) {
     selectedIds.push("exhaust-or-chimney");
+  } else if (cooks) {
+    selectedIds.push(
+      factSheet.aqiValue <= 100
+        ? "cooking-no-exhaust-low-aqi"
+        : "cooking-no-exhaust-high-aqi"
+    );
   }
 
   // purifier use and placement and filter care (only if hasPurifier)

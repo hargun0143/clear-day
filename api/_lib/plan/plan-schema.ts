@@ -38,7 +38,7 @@ export const PlanGoodHabitItemSchema = z.object({
 });
 
 export const PlanImpactItemSchema = z.object({
-  choice: z.string().min(1),
+  factorId: z.string().min(1),
   effect: z.string().min(1),
 });
 

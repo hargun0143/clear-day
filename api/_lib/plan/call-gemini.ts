@@ -49,6 +49,9 @@ export async function callGeminiPlan(
     goodHabits: selectGoodHabits(factSheet),
   };
 
+  const diySelected = selectedTopics.indoorAir.some(
+    (t) => t.id === "diy-filter"
+  );
   let lastValidPlan: GeneratedPlan | null = null;
   let attemptsCount = 0;
 
@@ -84,7 +87,11 @@ export async function callGeminiPlan(
 
     try {
       const parsedJson = JSON.parse(result.text!) as unknown;
-      const processed = postProcessPlan(parsedJson, factSheet.isUnder18);
+      const processed = postProcessPlan(
+        parsedJson,
+        factSheet.isUnder18,
+        diySelected
+      );
       const covered = enforceTopicCoverage(
         processed,
         selectedTopics,

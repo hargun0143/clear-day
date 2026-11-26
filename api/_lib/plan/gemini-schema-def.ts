@@ -96,10 +96,10 @@ export const GEMINI_RESPONSE_SCHEMA = {
       items: {
         type: "OBJECT",
         properties: {
-          choice: { type: "STRING" },
+          factorId: { type: "STRING" },
           effect: { type: "STRING" },
         },
-        required: ["choice", "effect"],
+        required: ["factorId", "effect"],
       },
     },
     disclaimer: {

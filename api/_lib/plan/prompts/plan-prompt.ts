@@ -54,7 +54,7 @@ TOPIC SECTIONS & TOPIC IDs (v3.1):
 10. indoorAir.tips: Present ONLY selectedTopics.indoorAir. Each item MUST include its topicId string and rewritten text. If diy-filter is absent, diyFilter.include MUST be false.
 11. lowEmissionChoices: Present ONLY selectedTopics.swaps. Each item MUST include topicId, swap, and benefit. Empty if under-18.
 12. goodHabits: Present selectedTopics.goodHabits (max 3), each with its topicId and text. Empty array if none.
-13. Impact: Must contain exactly the factors in facts.topFactors in that exact order, each explained qualitatively with no numbers, and must NOT repeat an indoorAir or swaps topic.
+13. Impact: Must contain exactly the factors in facts.topFactors in that exact order, returning each factorId and a qualitative effect with no numbers, and must NOT repeat an indoorAir or swaps topic.
 14. Disclaimer: "Estimates and guidance based on air quality data, not medical advice."
 15. ${bandStrictness}`;
 

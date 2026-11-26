@@ -17,13 +17,12 @@ describe("findRepeatedAdvice", () => {
     const plan = clonePlan({
       impact: [
         {
-          choice: "Keep windows closed during rush hours",
-          effect: "Reduces your indoor particulate load significantly.",
+          factorId: "high-outdoor-hours",
+          effect: "Keep windows closed during rush hours.",
         },
       ],
     });
     const result = findRepeatedAdvice(plan);
-    // "keep windows closed during rush hours" appears in indoorAir.tips AND impact.choice
     expect(result.length).toBeGreaterThan(0);
     expect(result[0]!.a).toBe("keep windows closed during rush hours");
     expect(result[0]!.b).toBe("keep windows closed during rush hours");
@@ -33,13 +32,14 @@ describe("findRepeatedAdvice", () => {
     const plan = clonePlan({
       impact: [
         {
-          choice: "Keep windows closed during rush hours for better indoor air",
-          effect: "Lowers your indoor particulate exposure overnight.",
+          factorId: "high-outdoor-hours",
+          effect:
+            "Keep windows closed during rush hours for better indoor air.",
         },
         {
-          choice:
-            "Keep windows closed during rush hours to reduce pollution entry",
-          effect: "Maintains a cleaner indoor baseline through the day.",
+          factorId: "car-or-two-wheeler",
+          effect:
+            "Keep windows closed during rush hours to reduce pollution entry.",
         },
       ],
     });
@@ -89,8 +89,8 @@ describe("findRepeatedAdvice", () => {
   it("does not flag short sentences as near-duplicates by first-6-word rule", () => {
     const plan = clonePlan({
       impact: [
-        { choice: "Walk more", effect: "Reduces emissions." },
-        { choice: "Walk daily", effect: "Good for health." },
+        { factorId: "high-outdoor-hours", effect: "Walk more." },
+        { factorId: "car-or-two-wheeler", effect: "Walk daily." },
       ],
     });
     // "walk more" and "walk daily" share only 1 word — should not be flagged as near-dup

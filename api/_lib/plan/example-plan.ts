@@ -98,12 +98,12 @@ export const EXAMPLE_PLAN: GeneratedPlan = {
   ],
   impact: [
     {
-      choice: "Filtering indoor bedroom air",
+      factorId: "car-or-two-wheeler",
       effect:
-        "Substantially lowers overnight particulate inhalation while sleeping.",
+        "Substantially lowers daily road-level tailpipe particulate inhalation.",
     },
     {
-      choice: "Avoiding outdoor morning exertion",
+      factorId: "high-outdoor-hours",
       effect:
         "Minimizes deep-lung air exchange during the day's highest pollution window.",
     },

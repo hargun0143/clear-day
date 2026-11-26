@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { matchesMedia } from "@/utils/background/canvas-helpers";
 import { startFlowCanvas } from "@/utils/background/canvas-runner";
 import {
@@ -18,10 +18,13 @@ export function useFlowCanvas(
   canvasRef: RefObject<HTMLCanvasElement | null>,
   { aqi, densityScale, speedScale }: UseFlowCanvasOptions
 ): { skipCanvas: boolean; hazeAlpha: number } {
-  const targetParams = getFlowParams(aqi);
+  const targetParams = useMemo(() => getFlowParams(aqi), [aqi]);
   const currentRef = useRef<FlowParams>(targetParams);
   const targetRef = useRef<FlowParams>(targetParams);
-  targetRef.current = targetParams;
+
+  useEffect(() => {
+    targetRef.current = targetParams;
+  }, [targetParams]);
 
   const [skipCanvas, setSkipCanvas] = useState(
     () =>

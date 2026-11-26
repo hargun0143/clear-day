@@ -29,7 +29,7 @@ function getSectionTexts(plan: GeneratedPlan): Record<string, string> {
   const swaps = plan.lowEmissionChoices
     .flatMap((c) => [c.swap, c.benefit])
     .join(" ");
-  const impact = plan.impact.flatMap((i) => [i.choice, i.effect]).join(" ");
+  const impact = plan.impact.flatMap((i) => [i.factorId, i.effect]).join(" ");
   return {
     dailyPlan: normalise(daily),
     indoorAir: normalise(indoor),
@@ -51,7 +51,7 @@ export function findRepeatedAdvice(plan: GeneratedPlan): RepeatPair[] {
       normalise(c.swap),
       normalise(c.benefit),
     ]),
-    ...plan.impact.flatMap((i) => [normalise(i.choice), normalise(i.effect)]),
+    ...plan.impact.flatMap((i) => [normalise(i.factorId), normalise(i.effect)]),
   ];
 
   for (let i = 0; i < sentences.length; i++) {

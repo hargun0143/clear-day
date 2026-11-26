@@ -1,4 +1,4 @@
-import { DEFAULT_SLOT_ACTIONS } from "./knowledge-sheet.js";
+import { DEFAULT_SLOT_ACTIONS, DIY_BOX_FAN_FILTER } from "./knowledge-sheet.js";
 import { GeneratedPlanSchema, type GeneratedPlan } from "./plan-schema.js";
 
 function normalizeSlotActions(dailyPlan: unknown[]): unknown[] {
@@ -23,9 +23,36 @@ function normalizeSlotActions(dailyPlan: unknown[]): unknown[] {
   });
 }
 
+function normalizeDiyFilter(
+  rawFilter: unknown,
+  shouldInclude: boolean
+): Record<string, unknown> {
+  const f =
+    typeof rawFilter === "object" && rawFilter !== null
+      ? { ...(rawFilter as Record<string, unknown>) }
+      : {};
+  if (!shouldInclude) {
+    return { include: false, materials: [], steps: [], safetyNote: "" };
+  }
+  const materials =
+    Array.isArray(f.materials) && f.materials.length > 0
+      ? f.materials
+      : [...DIY_BOX_FAN_FILTER.materials];
+  const steps =
+    Array.isArray(f.steps) && f.steps.length > 0
+      ? f.steps
+      : [...DIY_BOX_FAN_FILTER.steps];
+  const safetyNote =
+    typeof f.safetyNote === "string" && f.safetyNote.trim().length > 0
+      ? f.safetyNote
+      : DIY_BOX_FAN_FILTER.safetyNotes.join(" ");
+  return { include: true, materials, steps, safetyNote };
+}
+
 export function postProcessPlan(
   raw: unknown,
-  isUnder18: boolean
+  isUnder18: boolean,
+  diySelected?: boolean
 ): GeneratedPlan {
   if (typeof raw !== "object" || raw === null) {
     throw new Error("Invalid plan object");
@@ -44,18 +71,38 @@ export function postProcessPlan(
       return h;
     });
   }
-
   if (Array.isArray(obj.dailyPlan)) {
     obj.dailyPlan = normalizeSlotActions(obj.dailyPlan);
   }
+  if (Array.isArray(obj.impact)) {
+    obj.impact = obj.impact.map((item: unknown) => {
+      if (typeof item !== "object" || item === null) return item;
+      const rec = { ...(item as Record<string, unknown>) };
+      if (!rec.factorId && typeof rec.choice === "string") {
+        rec.factorId = rec.choice;
+      }
+      return rec;
+    });
+  }
 
+  const shouldIncludeDiy = diySelected ?? isUnder18;
   if (typeof obj.indoorAir === "object" && obj.indoorAir !== null) {
     const indoorAir = { ...(obj.indoorAir as Record<string, unknown>) };
     if (Array.isArray(indoorAir.tips)) {
-      indoorAir.tips = indoorAir.tips.map((tip: unknown, i: number) => {
-        if (typeof tip === "string") return { topicId: `tip-${i}`, text: tip };
-        return tip;
-      });
+      indoorAir.tips = indoorAir.tips
+        .map((tip: unknown, i: number) =>
+          typeof tip === "string" ? { topicId: `tip-${i}`, text: tip } : tip
+        )
+        .filter((tip: unknown) => {
+          const rec = tip as Record<string, unknown>;
+          return rec.topicId !== "diy-filter";
+        });
+    }
+    if (diySelected !== undefined || isUnder18) {
+      indoorAir.diyFilter = normalizeDiyFilter(
+        indoorAir.diyFilter,
+        shouldIncludeDiy
+      );
     }
     obj.indoorAir = indoorAir;
   }
@@ -72,23 +119,7 @@ export function postProcessPlan(
       }
     );
   }
-
-  if (isUnder18) {
-    obj.lowEmissionChoices = [];
-    if (typeof obj.indoorAir === "object" && obj.indoorAir !== null) {
-      const indoorAir = { ...(obj.indoorAir as Record<string, unknown>) };
-      if (
-        typeof indoorAir.diyFilter === "object" &&
-        indoorAir.diyFilter !== null
-      ) {
-        indoorAir.diyFilter = {
-          ...(indoorAir.diyFilter as Record<string, unknown>),
-          include: true,
-        };
-      }
-      obj.indoorAir = indoorAir;
-    }
-  }
+  if (isUnder18) obj.lowEmissionChoices = [];
 
   return GeneratedPlanSchema.parse(obj);
 }

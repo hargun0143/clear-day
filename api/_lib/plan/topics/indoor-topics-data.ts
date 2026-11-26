@@ -37,6 +37,20 @@ export const INDOOR_TOPICS: readonly KnowledgeTopic[] = [
       "Run the kitchen exhaust fan or chimney while cooking to vent particulates outdoors.",
   },
   {
+    id: "cooking-no-exhaust-low-aqi",
+    section: "indoorAir",
+    title: "Open a kitchen window while cooking",
+    detail:
+      "Open a window in the kitchen while cooking so smoke and cooking particles can clear outdoors.",
+  },
+  {
+    id: "cooking-no-exhaust-high-aqi",
+    section: "indoorAir",
+    title: "Contain cooking particles indoors",
+    detail:
+      "Keep lids on pots and keep the kitchen door closed while cooking so particles do not spread.",
+  },
+  {
     id: "purifier-care",
     section: "indoorAir",
     title: "Air purifier operation",

@@ -19,7 +19,7 @@ function extractAllTexts(plan: GeneratedPlan): string[] {
     ...plan.indoorAir.tips.map((t) => t.text),
     plan.indoorAir.diyFilter.safetyNote,
     ...plan.lowEmissionChoices.flatMap((c) => [c.swap, c.benefit]),
-    ...plan.impact.flatMap((i) => [i.choice, i.effect]),
+    ...plan.impact.flatMap((i) => [i.factorId, i.effect]),
     plan.disclaimer,
     ...(plan.goodHabits?.map((h) => h.text) ?? []),
   ];
@@ -73,7 +73,7 @@ export function findEquipmentViolations(plan: GeneratedPlan): string[] {
     plan.todaySummary,
     ...plan.dailyPlan.flatMap((s) => [...s.actions, s.why]),
     ...plan.lowEmissionChoices.flatMap((c) => [c.swap, c.benefit]),
-    ...plan.impact.flatMap((i) => [i.choice, i.effect]),
+    ...plan.impact.flatMap((i) => [i.factorId, i.effect]),
     plan.disclaimer,
     ...(plan.goodHabits?.map((h) => h.text) ?? []),
   ].join(" ");
