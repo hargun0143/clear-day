@@ -1,5 +1,20 @@
-export type Palette = readonly [string, string, string];
+export interface FlowPalette {
+  baseTop: string;
+  baseBottom: string;
+  tealGlow: string;
+  amberGlow: string;
+}
 
-export const LANDING_PALETTE: Palette = ["#B9722A", "#5B6572", "#3A424D"];
+export const LANDING_PALETTE: FlowPalette = {
+  baseTop: "#080b10",
+  baseBottom: "#0e131b",
+  tealGlow: "rgba(45, 212, 191, 0.09)",
+  amberGlow: "rgba(224, 138, 60, 0.42)",
+};
 
-export const CALM_PALETTE: Palette = ["#A65A1C", "#3D444E", "#2B323B"];
+export const CALM_PALETTE: FlowPalette = {
+  baseTop: "#080b10",
+  baseBottom: "#0b0f16",
+  tealGlow: "rgba(45, 212, 191, 0.05)",
+  amberGlow: "rgba(224, 138, 60, 0.30)",
+};

@@ -1,7 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "./styles/shiny-button.css";
-@import "./styles/haze.css";
 
 /* Inter Variable - Latin subset only */
 @font-face {

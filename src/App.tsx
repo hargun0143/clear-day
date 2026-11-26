@@ -1,32 +1,20 @@
-import { lazy, Suspense, useState } from "react";
+import { Suspense, useState } from "react";
 import { domAnimation, LazyMotion } from "framer-motion";
 import { Hero, type HeroActiveAqiInfo } from "@/components/landing/hero";
 import { ImpactSection } from "@/components/landing/impact-section";
 import { SiteFooter } from "@/components/landing/site-footer";
-import { HazeBackground } from "@/components/layout/haze-background";
+import { FlowBackground } from "@/components/layout/flow-background";
 import { NavBar } from "@/components/layout/nav-bar";
 import { SampleBanner } from "@/components/layout/sample-banner";
 import { ViewFallback } from "@/components/layout/view-fallback";
 import { CALM_PALETTE, LANDING_PALETTE } from "@/constants/palettes";
+import { useBackgroundAqi } from "@/hooks/use-background-aqi";
+import {
+  HowItWorksDialog,
+  PlanScreen,
+  QuestionnaireScreen,
+} from "@/utils/lazy-views";
 import type { QuestionnaireResult } from "@/utils/questionnaire/types";
-
-const HowItWorksDialog = lazy(() =>
-  import("@/components/layout/how-it-works-dialog").then((m) => ({
-    default: m.HowItWorksDialog,
-  }))
-);
-
-const QuestionnaireScreen = lazy(() =>
-  import("@/components/questionnaire/questionnaire-screen").then((m) => ({
-    default: m.QuestionnaireScreen,
-  }))
-);
-
-const PlanScreen = lazy(() =>
-  import("@/components/plan/plan-screen").then((m) => ({
-    default: m.PlanScreen,
-  }))
-);
 
 export type AppView = "landing" | "questionnaire" | "plan";
 
@@ -62,11 +50,21 @@ export function App() {
   };
 
   const currentPalette = view === "landing" ? LANDING_PALETTE : CALM_PALETTE;
+  const backgroundAqi = useBackgroundAqi(
+    view,
+    sampleMode,
+    selectedCityId,
+    activeAqi?.value
+  );
 
   return (
     <LazyMotion features={domAnimation} strict>
       <div className="flex min-h-screen flex-col">
-        <HazeBackground palette={currentPalette} />
+        <FlowBackground
+          palette={currentPalette}
+          aqi={backgroundAqi}
+          mode={view}
+        />
         <NavBar
           onHowItWorks={() => setDialogOpen(true)}
           sampleMode={sampleMode}
