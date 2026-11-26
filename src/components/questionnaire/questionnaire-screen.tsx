@@ -1,5 +1,5 @@
 import { useMemo, type FC } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { BackButton } from "@/components/questionnaire/back-button";
 import { ProgressBar } from "@/components/questionnaire/progress-bar";
@@ -72,7 +72,7 @@ export const QuestionnaireScreen: FC<QuestionnaireScreenProps> = ({
       <div className="glass relative min-h-[380px] rounded-[28px] p-6 sm:p-8">
         <AnimatePresence mode="wait">
           {currentQuestion && (
-            <motion.div
+            <m.div
               key={currentQuestion.id}
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -90,7 +90,7 @@ export const QuestionnaireScreen: FC<QuestionnaireScreenProps> = ({
                 }
                 under18Note={noteForCard}
               />
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
 

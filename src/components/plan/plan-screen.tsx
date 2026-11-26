@@ -1,11 +1,16 @@
-import { useMemo, type FC } from "react";
+import { lazy, Suspense, useMemo, type FC } from "react";
 import { PlanLoading } from "@/components/plan/plan-loading";
-import { PlanPage } from "@/components/plan/plan-page";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { CITIES } from "@/constants/cities";
 import { usePlan } from "@/hooks/use-plan";
 import type { PlanRequestPayload } from "@/services/plan-client";
 import type { QuestionnaireResult } from "@/utils/questionnaire/types";
+
+const PlanPage = lazy(() =>
+  import("@/components/plan/plan-page").then((m) => ({
+    default: m.PlanPage,
+  }))
+);
 
 export interface PlanScreenProps {
   result: QuestionnaireResult;
@@ -66,14 +71,16 @@ export const PlanScreen: FC<PlanScreenProps> = ({
   }
 
   return (
-    <PlanPage
-      plan={data.plan}
-      meta={data.meta}
-      aqiValue={aqiValue}
-      cityId={result.cityId}
-      source={source}
-      isModelled={isModelled}
-      onStartOver={onStartOver}
-    />
+    <Suspense fallback={<PlanLoading cityName={cityName} />}>
+      <PlanPage
+        plan={data.plan}
+        meta={data.meta}
+        aqiValue={aqiValue}
+        cityId={result.cityId}
+        source={source}
+        isModelled={isModelled}
+        onStartOver={onStartOver}
+      />
+    </Suspense>
   );
 };

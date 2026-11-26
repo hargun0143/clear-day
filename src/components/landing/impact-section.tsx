@@ -1,5 +1,5 @@
 import type { FC } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion } from "framer-motion";
 import { IMPACT_HEADING, IMPACT_ITEMS } from "@/constants/impact";
 
 export const ImpactSection: FC = () => {
@@ -15,7 +15,7 @@ export const ImpactSection: FC = () => {
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6">
         {IMPACT_ITEMS.map((item, index) => (
-          <motion.article
+          <m.article
             key={item.id}
             initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -32,7 +32,7 @@ export const ImpactSection: FC = () => {
             <p className="mt-3 text-sm leading-relaxed text-ink/80 sm:text-base">
               {item.description}
             </p>
-          </motion.article>
+          </m.article>
         ))}
       </div>
     </section>
