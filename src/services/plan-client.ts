@@ -27,10 +27,44 @@ export interface PlanApiResponse {
   meta: PlanApiMeta;
 }
 
+const planCache = new Map<string, PlanApiResponse>();
+
+export function createPlanCacheKey(payload: PlanRequestPayload): string {
+  const sortedAnswers: Record<string, unknown> = {};
+  const answerKeys = Object.keys(payload.answers || {}).sort();
+  for (const k of answerKeys) {
+    const val = payload.answers[k];
+    if (Array.isArray(val)) {
+      sortedAnswers[k] = [...val].sort();
+    } else {
+      sortedAnswers[k] = val;
+    }
+  }
+  return JSON.stringify({
+    cityId: payload.cityId,
+    aqiValue: payload.aqi.value,
+    answers: sortedAnswers,
+  });
+}
+
+export function clearPlanCache(): void {
+  planCache.clear();
+}
+
+export function getPlanCacheSize(): number {
+  return planCache.size;
+}
+
 export async function requestPlan(
   payload: PlanRequestPayload,
   signal?: AbortSignal
 ): Promise<PlanApiResponse> {
+  const cacheKey = createPlanCacheKey(payload);
+  const cached = planCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const response = await fetch("/api/plan", {
     method: "POST",
     headers: {
@@ -45,5 +79,8 @@ export async function requestPlan(
   }
 
   const data = (await response.json()) as PlanApiResponse;
+  if (!data.meta.isFallback) {
+    planCache.set(cacheKey, data);
+  }
   return data;
 }

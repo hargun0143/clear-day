@@ -28,4 +28,5 @@ export interface FactSheet {
   budgetId: string | null;
   budgetLabel: string | null;
   roleSpecificAnswerLabel: string;
+  topFactors: string[];
 }

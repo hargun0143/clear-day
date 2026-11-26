@@ -14,9 +14,11 @@ export const IndoorAirSection: FC<IndoorAirSectionProps> = ({ indoorAir }) => {
       </h2>
 
       <ul className="list-inside list-disc space-y-1.5 text-sm text-ink/90">
-        {indoorAir.tips.map((tip, i) => (
-          <li key={i}>{tip}</li>
-        ))}
+        {indoorAir.tips.map((tip, i) => {
+          const text = typeof tip === "string" ? tip : tip.text;
+          const key = typeof tip === "string" ? i : tip.topicId || i;
+          return <li key={key}>{text}</li>;
+        })}
       </ul>
 
       {indoorAir.diyFilter.include && (

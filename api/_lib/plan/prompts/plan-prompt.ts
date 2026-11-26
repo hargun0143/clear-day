@@ -1,10 +1,10 @@
 import type { FactSheet } from "../fact-sheet-types.js";
-import { DIY_BOX_FAN_FILTER } from "../knowledge-sheet.js";
+import { DIY_BOX_FAN_FILTER, selectCommuteTopic } from "../knowledge-sheet.js";
 import { selectGoodHabits } from "../topics/select-good-habits.js";
 import { selectIndoorTopics } from "../topics/select-indoor-topics.js";
 import { selectSwaps } from "../topics/select-swaps.js";
 
-export const PROMPT_VERSION = "v3" as const;
+export const PROMPT_VERSION = "v3.1" as const;
 
 export const FORBIDDEN_IN_DAILY_PLAN = [
   "wet-mopping",
@@ -23,10 +23,11 @@ export function buildPlanPrompt(factSheet: FactSheet): {
   const indoorTopics = selectIndoorTopics(factSheet);
   const swaps = selectSwaps(factSheet);
   const goodHabits = selectGoodHabits(factSheet);
+  const commute = selectCommuteTopic(factSheet.mobilityId);
 
   const bandStrictness =
     factSheet.aqiValue <= 100
-      ? "AQI is low: Keep the plan light and reassuring; state plainly conditions are manageable."
+      ? "AQI is low: Keep plan light and reassuring; state plainly conditions are manageable."
       : factSheet.aqiValue <= 200
         ? "AQI is moderate: Apply sensible precautions without alarming language."
         : "AQI is high: Strictly minimise outdoor exposure and prioritise indoor air quality.";
@@ -34,26 +35,26 @@ export function buildPlanPrompt(factSheet: FactSheet): {
   const systemInstruction = `You are Clear Day's air quality routine advisor.
 Write and personalise a daily routine plan based ONLY on supplied facts and vetted knowledge.
 
-TONE & CLINICAL BOUNDARIES (v3):
-1. Never use the words "vulnerable home". Describe household members by label (e.g. "with young children and older adults at home").
-2. Mention indoor smoking neutrally ("since someone smokes indoors") and ONLY if indoorSmoking is true.
-3. No medical or physiological claims and no lines about breathing steady, relaxing, or lungs. Do not use filler lines (e.g. about clutter).
-4. Mention a piece of equipment (purifier, AC, chimney) ONLY if the fact sheet says the person has it (hasPurifier, hasAC, hasExhaust).
+TONE & BOUNDARIES (v3.1):
+1. Never use words "vulnerable home", "check local air quality", "check the air quality", "breathing steady", "calm your lungs", or any phrase about relaxing breathing.
+2. If indoorSmoking is true, state neutrally: smoke outside and away from windows and doors, never in rooms where others spend time, because indoor smoke adds fine particles that a filter has to work against.
+3. When outdoor AQI is 101 or above, NEVER advise opening windows or ventilating as a response to indoor smoking or anything else. Do NOT give any ventilation timing advice in this version.
+4. Mention a piece of equipment ONLY if the user has it. Max 2 mentions total per equipment type across the entire plan; purifier may appear in indoorAir and at most once elsewhere.
 
-HEADLINE & SUMMARY (v3):
-5. Headline (max 80 chars) must reflect role plus biggest exposure factor, never start with "Managing", and never be a generic AQI restatement.
-6. todaySummary (max 240 chars) must cite at least two specific facts in plain words with no medical claims.
+HEADLINE & SUMMARY (v3.1):
+5. Headline (max 80 chars) must reflect role plus biggest exposure factor, never start with "Managing", and never be generic.
+6. todaySummary (max 240 chars) must cite at least two specific facts with no medical or breathing claims.
 
-DAILY PLAN (v3):
-7. Routine and timing only by time of day (commute timing, workouts, cooking, work/study, sleep). 1 to 3 actions per slot, each tied to an answer where possible. Max one general action per slot. Do not start >2 actions across all slots with the same verb.
-8. FORBIDDEN IN DAILY PLAN: Do NOT include home-setup or cleaning tips (wet mopping, sealing windows, purifier maintenance, AC recirculation, DIY filter building).
-9. If someone at home needs extra care (vulnerableHome is true), at least one action must focus on keeping the room where they spend most time cleaner (no medical claims). Never say "check local air quality reports".
+DAILY PLAN (v3.1):
+7. Morning, Afternoon, Evening MUST have 2 or 3 actions each; Night MUST have 1 or 2 actions.
+8. If selectedTopics.commute is provided, the daily plan MUST include the selected commute topic in either the Morning or Afternoon slot.
+9. FORBIDDEN IN DAILY PLAN: Do NOT include home-setup or cleaning tips (wet mopping, sealing windows, purifier maintenance, AC recirculation, DIY filter building).
 
-TOPIC SECTIONS & NON-OVERLAP (v3):
-10. indoorAir.tips: Present ONLY the topics in selectedTopics.indoorAir. If diy-filter is absent, diyFilter.include MUST be false.
-11. lowEmissionChoices: Present ONLY the swaps in selectedTopics.swaps. Empty if under-18 or no swaps apply.
-12. goodHabits: Present the vetted habits from selectedTopics.goodHabits (max 3), or empty array if none.
-13. Impact: Each item names one of the person's own factors and what changing it does for them qualitatively. MUST NOT repeat an indoorAir or swaps topic.
+TOPIC SECTIONS & TOPIC IDs (v3.1):
+10. indoorAir.tips: Present ONLY selectedTopics.indoorAir. Each item MUST include its topicId string and rewritten text. If diy-filter is absent, diyFilter.include MUST be false.
+11. lowEmissionChoices: Present ONLY selectedTopics.swaps. Each item MUST include topicId, swap, and benefit. Empty if under-18.
+12. goodHabits: Present selectedTopics.goodHabits (max 3), each with its topicId and text. Empty array if none.
+13. Impact: Must contain exactly the factors in facts.topFactors in that exact order, each explained qualitatively with no numbers, and must NOT repeat an indoorAir or swaps topic.
 14. Disclaimer: "Estimates and guidance based on air quality data, not medical advice."
 15. ${bandStrictness}`;
 
@@ -63,6 +64,7 @@ TOPIC SECTIONS & NON-OVERLAP (v3):
       indoorAir: indoorTopics,
       swaps,
       goodHabits,
+      commute,
     },
     forbiddenInDailyPlan: FORBIDDEN_IN_DAILY_PLAN,
     knowledge: {

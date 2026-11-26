@@ -25,9 +25,9 @@ export const INDOOR_TOPICS: readonly KnowledgeTopic[] = [
   {
     id: "indoor-smoking",
     section: "indoorAir",
-    title: "Eliminate indoor smoke",
+    title: "Smoke outside living areas",
     detail:
-      "Avoid all indoor smoking and burning incense, dhoop, or mosquito coils.",
+      "Smoke outside and away from windows and doors, never in the rooms where others spend time, because indoor smoke adds fine particles that a filter has to work against.",
   },
   {
     id: "exhaust-or-chimney",

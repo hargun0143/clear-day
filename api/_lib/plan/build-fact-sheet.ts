@@ -7,6 +7,7 @@ import { ROLES } from "../../../src/constants/questionnaire/roles.js";
 import type { QuestionnaireAnswers } from "../../../src/utils/questionnaire/types.js";
 import type { FactSheet, PlanAqiInput } from "./fact-sheet-types.js";
 import { getOptionLabel, toStringList } from "./label-helper.js";
+import { selectTopFactors } from "./topics/select-top-factors.js";
 
 export function buildFactSheet(
   cityId: string,
@@ -76,7 +77,7 @@ export function buildFactSheet(
     habitVal
   );
 
-  return {
+  const partialSheet = {
     cityName,
     aqiValue: aqiInput.value,
     aqiBandLabel: band.label,
@@ -98,5 +99,9 @@ export function buildFactSheet(
     budgetId,
     budgetLabel,
     roleSpecificAnswerLabel,
+    topFactors: [] as string[],
   };
+
+  partialSheet.topFactors = selectTopFactors(partialSheet);
+  return partialSheet;
 }

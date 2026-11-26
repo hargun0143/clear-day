@@ -1,4 +1,9 @@
 import {
+  COMMUTE_TOPICS,
+  selectCommuteTopic,
+  type CommuteTopic,
+} from "./topics/commute-topics-data.js";
+import {
   ALL_KNOWLEDGE_TOPICS,
   IMPACT_TOPICS,
   INDOOR_TOPICS,
@@ -9,9 +14,12 @@ import {
 
 export {
   ALL_KNOWLEDGE_TOPICS,
+  COMMUTE_TOPICS,
   IMPACT_TOPICS,
   INDOOR_TOPICS,
   SWAP_TOPICS,
+  selectCommuteTopic,
+  type CommuteTopic,
   type KnowledgeTopic,
   type TopicSection,
 };
@@ -43,6 +51,24 @@ export const DIY_BOX_FAN_FILTER: DtoFixedFilterInfo = {
     "Never leave a damaged, humming, or overheating fan running",
   ],
 } as const;
+
+export const DEFAULT_SLOT_ACTIONS: Record<string, string[]> = {
+  Morning: [
+    "Keep windows and exterior doors closed before roadway traffic peaks.",
+    "Schedule essential morning tasks to avoid heavy physical exertion outside.",
+  ],
+  Afternoon: [
+    "Stay in the most shielded interior room during peak sunlight hours.",
+    "Operate kitchen exhaust or keep doors closed while preparing midday meals.",
+  ],
+  Evening: [
+    "Wear an N95 mask if outdoor travel or errands near busy roads are necessary.",
+    "Keep windows sealed as evening vehicle exhaust accumulates.",
+  ],
+  Night: [
+    "Keep the bedroom door closed to maintain a clean sleeping zone overnight.",
+  ],
+};
 
 export const INDOOR_AIR_FACTS: readonly string[] = INDOOR_TOPICS.map(
   (t) => t.detail

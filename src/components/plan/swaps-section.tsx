@@ -16,7 +16,7 @@ export const SwapsSection: FC<SwapsSectionProps> = ({ choices }) => {
       <div className="grid gap-3 md:grid-cols-2">
         {choices.map((item, i) => (
           <div
-            key={i}
+            key={item.topicId || i}
             className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 space-y-1"
           >
             <p className="text-sm font-medium text-ink">{item.swap}</p>

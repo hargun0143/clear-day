@@ -18,17 +18,25 @@ interface GeminiApiResponse {
 
 export function buildRequestBody(
   systemInstruction: string,
-  userContent: string
+  userContent: string,
+  model = ""
 ): Record<string, unknown> {
+  const isThinkingModel = /2\.5|flash/i.test(model);
+  const generationConfig: Record<string, unknown> = {
+    temperature: GEMINI_TEMPERATURE,
+    maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
+    responseMimeType: "application/json",
+    responseSchema: GEMINI_RESPONSE_SCHEMA,
+  };
+
+  if (isThinkingModel) {
+    generationConfig.thinkingConfig = { thinkingBudget: 0 };
+  }
+
   return {
     system_instruction: { parts: [{ text: systemInstruction }] },
     contents: [{ role: "user", parts: [{ text: userContent }] }],
-    generationConfig: {
-      temperature: GEMINI_TEMPERATURE,
-      maxOutputTokens: GEMINI_MAX_OUTPUT_TOKENS,
-      responseMimeType: "application/json",
-      responseSchema: GEMINI_RESPONSE_SCHEMA,
-    },
+    generationConfig,
   };
 }
 

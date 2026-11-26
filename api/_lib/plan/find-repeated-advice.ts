@@ -23,7 +23,7 @@ function firstWords(text: string, count: number): string {
 function getSectionTexts(plan: GeneratedPlan): Record<string, string> {
   const daily = plan.dailyPlan.flatMap((s) => [...s.actions, s.why]).join(" ");
   const indoor = [
-    ...plan.indoorAir.tips,
+    ...plan.indoorAir.tips.map((t) => t.text),
     plan.indoorAir.diyFilter.safetyNote,
   ].join(" ");
   const swaps = plan.lowEmissionChoices
@@ -41,13 +41,12 @@ function getSectionTexts(plan: GeneratedPlan): Record<string, string> {
 export function findRepeatedAdvice(plan: GeneratedPlan): RepeatPair[] {
   const pairs: RepeatPair[] = [];
 
-  // Sentence-level exact and near duplicates first
   const sentences: string[] = [
     ...plan.dailyPlan.flatMap((s) => [
       ...s.actions.map(normalise),
       normalise(s.why),
     ]),
-    ...plan.indoorAir.tips.map(normalise),
+    ...plan.indoorAir.tips.map((t) => normalise(t.text)),
     ...plan.lowEmissionChoices.flatMap((c) => [
       normalise(c.swap),
       normalise(c.benefit),
@@ -71,7 +70,6 @@ export function findRepeatedAdvice(plan: GeneratedPlan): RepeatPair[] {
     }
   }
 
-  // Topic ID usage across multiple distinct sections
   const sectionTexts = getSectionTexts(plan);
   const sections = Object.keys(sectionTexts);
 

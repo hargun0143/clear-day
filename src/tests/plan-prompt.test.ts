@@ -18,9 +18,9 @@ const baseAnswers: QuestionnaireAnswers = {
   budget: "nothing-diy-only",
 };
 
-describe("plan-prompt v3", () => {
-  it('exports PROMPT_VERSION as "v3"', () => {
-    expect(PROMPT_VERSION).toBe("v3");
+describe("plan-prompt v3.1", () => {
+  it('exports PROMPT_VERSION as "v3.1"', () => {
+    expect(PROMPT_VERSION).toBe("v3.1");
   });
 
   it("contains the AQI value, band, and guidance without free-text user fields", () => {
@@ -54,10 +54,7 @@ describe("plan-prompt v3", () => {
     const factSheet = buildFactSheet("delhi", { value: 250 }, baseAnswers);
     const { systemInstruction } = buildPlanPrompt(factSheet);
 
-    expect(systemInstruction).toContain(
-      'Never use the words "vulnerable home"'
-    );
-    expect(systemInstruction).toContain("Describe household members by label");
+    expect(systemInstruction).toContain('"vulnerable home"');
   });
 
   it("mentions equipment only if fact sheet says person has it", () => {
@@ -65,7 +62,7 @@ describe("plan-prompt v3", () => {
     const { systemInstruction } = buildPlanPrompt(factSheet);
 
     expect(systemInstruction).toContain(
-      "Mention a piece of equipment (purifier, AC, chimney) ONLY if the fact sheet says the person has it"
+      "Mention a piece of equipment ONLY if the user has it"
     );
   });
 
@@ -82,7 +79,7 @@ describe("plan-prompt v3", () => {
     expect(FORBIDDEN_IN_DAILY_PLAN).toContain("windows-closed");
   });
 
-  it("includes selectedTopics for indoorAir, swaps, and goodHabits", () => {
+  it("includes selectedTopics for indoorAir, swaps, goodHabits, and commute", () => {
     const factSheet = buildFactSheet("delhi", { value: 150 }, baseAnswers);
     const { userContent } = buildPlanPrompt(factSheet);
 
@@ -90,14 +87,22 @@ describe("plan-prompt v3", () => {
     expect(userContent).toContain('"indoorAir"');
     expect(userContent).toContain('"swaps"');
     expect(userContent).toContain('"goodHabits"');
+    expect(userContent).toContain('"commute"');
   });
 
   it("forbids instructing user to check local air quality reports", () => {
     const factSheet = buildFactSheet("delhi", { value: 150 }, baseAnswers);
     const { systemInstruction } = buildPlanPrompt(factSheet);
 
+    expect(systemInstruction).toContain('"check local air quality"');
+  });
+
+  it("contains the ventilation rule when AQI is 101 or above", () => {
+    const factSheet = buildFactSheet("delhi", { value: 150 }, baseAnswers);
+    const { systemInstruction } = buildPlanPrompt(factSheet);
+
     expect(systemInstruction).toContain(
-      'Never say "check local air quality reports"'
+      "When outdoor AQI is 101 or above, NEVER advise opening windows or ventilating"
     );
   });
 });

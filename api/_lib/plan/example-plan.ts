@@ -5,8 +5,14 @@ export const EXAMPLE_PLAN: GeneratedPlan = {
   todaySummary:
     "Air quality is in the Moderate band today. For an office worker commuting via transit with family at home, pace outdoor travel around peak hours and maintain a clean indoor baseline.",
   goodHabits: [
-    "Using public transit for commuting",
-    "Maintaining a smoke-free home environment",
+    {
+      topicId: "public-transit",
+      text: "Using public transit for commuting",
+    },
+    {
+      topicId: "smoke-free-home",
+      text: "Maintaining a smoke-free home environment",
+    },
   ],
   dailyPlan: [
     {
@@ -21,7 +27,7 @@ export const EXAMPLE_PLAN: GeneratedPlan = {
       slot: "Afternoon",
       actions: [
         "Take scheduled rest breaks inside during midday heat",
-        "Prepare meals with steady ventilation",
+        "Keep pots covered while preparing midday meals to limit cooking particles",
       ],
       why: "Solar heating improves vertical air mixing during midday hours.",
     },
@@ -36,8 +42,7 @@ export const EXAMPLE_PLAN: GeneratedPlan = {
     {
       slot: "Night",
       actions: [
-        "Establish a restful bedroom environment with sealed doors",
-        "Keep evening activities calm and indoors",
+        "Keep the bedroom door closed to maintain a clean sleeping zone",
       ],
       why: "Uninterrupted rest helps recovery after daytime particulate exposure.",
     },
@@ -61,19 +66,33 @@ export const EXAMPLE_PLAN: GeneratedPlan = {
         "Use a fan in good condition, never leave it unattended while damaged, and keep away from water.",
     },
     tips: [
-      "Keep windows closed during rush hours.",
-      "Use wet mopping rather than dry sweeping to prevent stirring settled dust.",
-      "Avoid all indoor smoking, burning incense, or mosquito coils.",
-      "Run exhaust fans while cooking with oils or gas.",
+      {
+        topicId: "windows-closed",
+        text: "Keep windows closed during rush hours.",
+      },
+      {
+        topicId: "wet-mopping",
+        text: "Use wet mopping rather than dry sweeping to prevent stirring settled dust.",
+      },
+      {
+        topicId: "indoor-smoking",
+        text: "Smoke outside and away from windows and doors, never in the rooms where others spend time.",
+      },
+      {
+        topicId: "exhaust-or-chimney",
+        text: "Run exhaust fans while cooking with oils or gas.",
+      },
     ],
   },
   lowEmissionChoices: [
     {
+      topicId: "public-transit",
       swap: "Take public transit or metro for longer trips",
       benefit: "Reduces neighborhood vehicle emissions and congestion.",
     },
     {
-      swap: "Combine short car errands into one trip",
+      topicId: "avoid-idling",
+      swap: "Turn off vehicle engine while stopped",
       benefit: "Reduces cold-start engine pollution and overall fuel use.",
     },
   ],

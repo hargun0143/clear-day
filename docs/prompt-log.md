@@ -1,6 +1,51 @@
 # Prompt Log: Plan Generation
 
-## v3 (Current) — `api/_lib/plan/prompts/plan-prompt.ts`
+## v3.1 (Current) — `api/_lib/plan/prompts/plan-prompt.ts`
+
+### Problems observed in v3 output
+
+1. **Selected topics dropped:** A smoker's Indoor Air had no smoking tip, an AC owner had no AC tip, and a purifier owner's "already doing well" card omitted the purifier and public transport.
+2. **Banned phrases appeared:** Phrases like "Check local air quality before leaving for class" appeared in generated daily slots.
+3. **Contradictory advice:** The summary told a household with indoor smoking to "focus on ventilation" while the outdoor AQI was Poor (windows should stay closed).
+4. **Missing top factors:** The impact section missed the person's biggest factor (indoor smoking).
+5. **Commute guidance omitted:** Car and metro commuters received no specific commute precautions.
+6. **Excessive equipment repetition:** Air purifier was mentioned up to four times across the plan.
+7. **Thin plans & latency/503 fallback:** Thin daily slots with a single action, 15-20s latency, and occasional 503 errors resulting in fallback.
+
+### Changes made
+
+1. **Topic Coverage Guarantee:**
+   - Added `topicId` string to `indoorAir.tips`, `lowEmissionChoices`, and `goodHabits` schemas and Gemini schema definitions.
+   - Implemented `enforceTopicCoverage` in code to drop unselected topics and automatically fill any missing selected topics with vetted default text in deterministic order.
+2. **Banned Phrases & Equipment Limits:**
+   - Implemented `findBannedPhrases` checking blocklist ("check local air quality", "check the air quality", "vulnerable home", "breathing steady", "calm your lungs", and relaxing breathing variants).
+   - Implemented `findEquipmentViolations` to enforce ≤2 mentions per equipment type across the plan and ≤1 mention of purifier outside `indoorAir`.
+   - Merged detection into a single correction retry; post-retry sanitizer removes offending actions or replaces with vetted defaults.
+3. **Smoking and Ventilation Rules:**
+   - Added vetted neutral guidance to knowledge sheet: smoke outside and away from windows/doors, never in rooms where others spend time.
+   - Added strict prompt rule prohibiting ventilation advice when AQI is 101 or above.
+4. **Commute Tips per Mobility:**
+   - Added mobility-specific commute topics to knowledge sheet and prompt: car, bus-or-metro, two-wheeler/bicycle, walk. Mandated inclusion in Morning or Afternoon daily slots.
+5. **Top Factors for Impact:**
+   - Added pure `selectTopFactors` with a documented weight table (smoking, outdoor hours, biomass cooking, vehicle commute, no purifier with care, no exhaust). Exposed `topFactors` on `FactSheet` and prompt.
+6. **Minimum Content Enforcement:**
+   - Enforced 2-3 actions for Morning, Afternoon, Evening and 1-2 actions for Night in Zod schema and post-processing filler.
+7. **Reliability & Speed:**
+   - Added `GEMINI_FALLBACK_MODEL` env variable and fallback retry logic on 429/5xx errors within the 2-attempt budget.
+   - Disabled Gemini thinking budget (`thinkingConfig: { thinkingBudget: 0 }`) on supported models to eliminate 15-20s latency.
+   - Added in-memory client cache (`Map`) in `plan-client.ts` for instant repeat plan retrieval without caching fallbacks. Added dev timing logs.
+
+### Why these changes
+
+Models occasionally omit selected topics or hallucinate forbidden phrases under open-ended generation. Adding machine-readable topic IDs and deterministic post-validation code guarantees complete coverage, while client-side caching and thinking suppression ensure instant, robust generation.
+
+### Changes after testing
+
+_(Placeholder for future iterations and calibration observations)_
+
+---
+
+## v3 (Archived) — `api/_lib/plan/prompts/plan-prompt.ts`
 
 ### Problems observed in v2 output
 
@@ -29,7 +74,7 @@ Language models hallucinate equipment ownership and repeat advice when given fre
 
 ### Changes after testing
 
-_(Placeholder for future iterations and calibration observations)_
+_(Identified topic drops, banned phrases, contradictory ventilation, and missing commute tips. Resolved in v3.1)_
 
 ---
 

@@ -4,23 +4,30 @@ export const GEMINI_RESPONSE_SCHEMA = {
     headline: {
       type: "STRING",
       description:
-        "Brief headline summarizing the day's air quality context (max 80 chars).",
+        "Brief headline summarizing air quality context (max 80 chars).",
     },
     todaySummary: {
       type: "STRING",
       description:
-        "Concise summary of routine recommendations for today (max 240 chars).",
+        "Concise summary of routine recommendations today (max 240 chars).",
     },
     goodHabits: {
       type: "ARRAY",
-      items: { type: "STRING" },
       description:
         "Up to 3 positive clean-air habits the user is already doing.",
+      items: {
+        type: "OBJECT",
+        properties: {
+          topicId: { type: "STRING" },
+          text: { type: "STRING" },
+        },
+        required: ["topicId", "text"],
+      },
     },
     dailyPlan: {
       type: "ARRAY",
       description:
-        "Chronological daily schedule covering Morning, Afternoon, Evening, and Night.",
+        "Schedule covering Morning, Afternoon, Evening (2-3 actions), and Night (1-2 actions).",
       items: {
         type: "OBJECT",
         properties: {
@@ -31,7 +38,7 @@ export const GEMINI_RESPONSE_SCHEMA = {
           actions: {
             type: "ARRAY",
             items: { type: "STRING" },
-            description: "1 to 3 practical routine steps for this slot.",
+            description: "Practical routine steps (2-3 day slots, 1-2 Night).",
           },
           why: {
             type: "STRING",
@@ -57,28 +64,35 @@ export const GEMINI_RESPONSE_SCHEMA = {
         },
         tips: {
           type: "ARRAY",
-          items: { type: "STRING" },
-          description: "Up to 5 actionable indoor air quality tips.",
+          description: "Indoor tips rewritten with their topicId.",
+          items: {
+            type: "OBJECT",
+            properties: {
+              topicId: { type: "STRING" },
+              text: { type: "STRING" },
+            },
+            required: ["topicId", "text"],
+          },
         },
       },
       required: ["diyFilter", "tips"],
     },
     lowEmissionChoices: {
       type: "ARRAY",
-      description: "Up to 4 practical low emission swaps (empty if under-18).",
+      description: "Low emission swaps with topicId (empty if under-18).",
       items: {
         type: "OBJECT",
         properties: {
+          topicId: { type: "STRING" },
           swap: { type: "STRING" },
           benefit: { type: "STRING" },
         },
-        required: ["swap", "benefit"],
+        required: ["topicId", "swap", "benefit"],
       },
     },
     impact: {
       type: "ARRAY",
-      description:
-        "Up to 4 qualitative impacts of the choices without invented statistics.",
+      description: "Top impact factors in order without numbers.",
       items: {
         type: "OBJECT",
         properties: {
@@ -90,8 +104,7 @@ export const GEMINI_RESPONSE_SCHEMA = {
     },
     disclaimer: {
       type: "STRING",
-      description:
-        "Clear statement that this is air quality guidance and not medical advice.",
+      description: "Guidance based on air quality, not medical advice.",
     },
   },
   required: [

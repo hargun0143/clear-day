@@ -1,8 +1,9 @@
 import type { FC } from "react";
 import { CheckCircle2 } from "lucide-react";
+import type { GeneratedPlan } from "../../../api/_lib/plan/plan-schema.js";
 
 export interface GoodHabitsCardProps {
-  goodHabits?: string[];
+  goodHabits?: GeneratedPlan["goodHabits"] | string[];
 }
 
 export const GoodHabitsCard: FC<GoodHabitsCardProps> = ({ goodHabits }) => {
@@ -15,9 +16,11 @@ export const GoodHabitsCard: FC<GoodHabitsCardProps> = ({ goodHabits }) => {
         What you are already doing well
       </h2>
       <ul className="list-inside list-disc space-y-1 text-sm text-ink/90">
-        {goodHabits.map((habit, i) => (
-          <li key={i}>{habit}</li>
-        ))}
+        {goodHabits.map((habit, i) => {
+          const text = typeof habit === "string" ? habit : habit.text;
+          const key = typeof habit === "string" ? i : habit.topicId || i;
+          return <li key={key}>{text}</li>;
+        })}
       </ul>
     </section>
   );
