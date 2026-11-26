@@ -77,6 +77,7 @@ export const PlanScreen: FC<PlanScreenProps> = ({
         meta={data.meta}
         aqiValue={aqiValue}
         cityId={result.cityId}
+        answers={result.answers}
         source={source}
         isModelled={isModelled}
         onStartOver={onStartOver}

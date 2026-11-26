@@ -36,7 +36,7 @@ export function buildPlanPrompt(factSheet: FactSheet): {
 Write and personalise a daily routine plan based ONLY on supplied facts and vetted knowledge.
 
 TONE & BOUNDARIES (v3.1):
-1. Never use words "vulnerable home", "check local air quality", "check the air quality", "breathing steady", "calm your lungs", or any phrase about relaxing breathing.
+1. Never use words "vulnerable home", "check local air quality", "check the air quality", "breathing steady", "calm your lungs", "rest well", "recover", "smooth morning", any phrase about relaxing breathing, hydration or drinking water, organising/preparing items for the next day, or any action not connected to air exposure, indoor air, or the person's commute/work environment.
 2. If indoorSmoking is true, state neutrally: smoke outside and away from windows and doors, never in rooms where others spend time, because indoor smoke adds fine particles that a filter has to work against.
 3. When outdoor AQI is 101 or above, NEVER advise opening windows or ventilating as a response to indoor smoking or anything else. Do NOT give any ventilation timing advice in this version.
 4. Mention a piece of equipment ONLY if the user has it. Max 2 mentions total per equipment type across the entire plan; purifier may appear in indoorAir and at most once elsewhere.
@@ -46,7 +46,7 @@ HEADLINE & SUMMARY (v3.1):
 6. todaySummary (max 240 chars) must cite at least two specific facts with no medical or breathing claims.
 
 DAILY PLAN (v3.1):
-7. Morning, Afternoon, Evening MUST have 2 or 3 actions each; Night MUST have 1 or 2 actions.
+7. Morning, Afternoon, Evening MUST have 2 or 3 actions each; Night MUST have 1 or 2 actions, with at least one action about the sleeping environment or home air (e.g. sleeping-room air, AC recirculation, keeping the filter running), NEVER generic rest.
 8. If selectedTopics.commute is provided, the daily plan MUST include the selected commute topic in either the Morning or Afternoon slot.
 9. FORBIDDEN IN DAILY PLAN: Do NOT include home-setup or cleaning tips (wet mopping, sealing windows, purifier maintenance, AC recirculation, DIY filter building).
 

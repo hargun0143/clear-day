@@ -30,6 +30,13 @@ export const SWAP_TOPICS: readonly KnowledgeTopic[] = [
       "Shift away from wood, coal or solid biomass toward LPG, induction, or electric cooking.",
   },
   {
+    id: "combine-errands",
+    section: "swaps",
+    title: "Combine errands into fewer trips",
+    detail:
+      "Group daily errands into a single outing to cut down total travel and outdoor exposure.",
+  },
+  {
     id: "never-burn-waste",
     section: "swaps",
     title: "Do not burn garden waste or rubbish",

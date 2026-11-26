@@ -6,10 +6,19 @@ export const BANNED_PHRASES: readonly string[] = [
   "vulnerable home",
   "breathing steady",
   "calm your lungs",
+  "drink water",
+  "stay hydrated",
+  "hydration",
+  "rest well",
+  "recover",
+  "smooth morning",
 ] as const;
 
-const RELAX_BREATHING_REGEX =
-  /\b(?:relax(?:ing)?|calm(?:ing)?)\s+(?:your\s+)?breathing\b/i;
+const BANNED_REGEXES: readonly RegExp[] = [
+  /\b(?:relax(?:ing)?|calm(?:ing)?)\s+(?:your\s+)?breathing\b/i,
+  /\b(?:stay\s+hydrated|drink(?:ing)?\s+(?:plenty\s+of\s+)?water|hydrat(?:e|ion))\b/i,
+  /\b(?:organis|organiz|prepar)(?:e|ing)\s+(?:items|things|bags?|clothes|gear)\s+for\s+(?:the\s+)?next\s+day\b/i,
+];
 
 function extractAllTexts(plan: GeneratedPlan): string[] {
   return [
@@ -28,7 +37,7 @@ function extractAllTexts(plan: GeneratedPlan): string[] {
 export function hasBannedPhrase(text: string): boolean {
   const lower = text.toLowerCase();
   if (BANNED_PHRASES.some((bp) => lower.includes(bp))) return true;
-  return RELAX_BREATHING_REGEX.test(text);
+  return BANNED_REGEXES.some((rx) => rx.test(text));
 }
 
 export function findBannedPhrases(plan: GeneratedPlan): string[] {
@@ -39,8 +48,10 @@ export function findBannedPhrases(plan: GeneratedPlan): string[] {
     for (const phrase of BANNED_PHRASES) {
       if (lower.includes(phrase)) found.add(phrase);
     }
-    const match = text.match(RELAX_BREATHING_REGEX);
-    if (match) found.add(match[0].toLowerCase());
+    for (const rx of BANNED_REGEXES) {
+      const match = text.match(rx);
+      if (match) found.add(match[0].toLowerCase());
+    }
   }
   return [...found];
 }
@@ -98,7 +109,9 @@ export function sanitizeBannedActions(
     let actions = slot.actions.filter((a) => !hasBannedPhrase(a));
     if (actions.length === 0) {
       const fallback = defaultSlotActions[slot.slot]?.[0];
-      actions = [fallback ?? "Rest indoors in a sealed room."];
+      actions = [
+        fallback ?? "Keep bedroom doors closed to maintain clean indoor air.",
+      ];
     }
     return { ...slot, actions };
   });

@@ -44,7 +44,7 @@ export const EXAMPLE_PLAN: GeneratedPlan = {
       actions: [
         "Keep the bedroom door closed to maintain a clean sleeping zone",
       ],
-      why: "Uninterrupted rest helps recovery after daytime particulate exposure.",
+      why: "Keeping the sleeping room sealed overnight lowers particle exposure while asleep.",
     },
   ],
   indoorAir: {

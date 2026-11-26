@@ -12,6 +12,7 @@ export interface PlanSummaryPanelProps {
   aqiBandColor: string;
   cityName: string;
   dataSourceLabel: string;
+  profileChips?: string[];
   onStartOver: () => void;
 }
 
@@ -23,6 +24,7 @@ export const PlanSummaryPanel: FC<PlanSummaryPanelProps> = ({
   aqiBandColor,
   cityName,
   dataSourceLabel,
+  profileChips,
   onStartOver,
 }) => {
   const h1Ref = useRef<HTMLHeadingElement>(null);
@@ -64,6 +66,24 @@ export const PlanSummaryPanel: FC<PlanSummaryPanelProps> = ({
           </p>
         </div>
       </div>
+
+      {profileChips && profileChips.length > 0 && (
+        <div className="space-y-1.5">
+          <p className="text-[11px] font-medium uppercase tracking-wider text-ink-muted">
+            Planned for
+          </p>
+          <div className="flex flex-wrap gap-1.5">
+            {profileChips.map((chip) => (
+              <span
+                key={chip}
+                className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-xs text-ink/85"
+              >
+                {chip}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       <p className="text-xs text-ink-muted">Source: {dataSourceLabel}</p>
 

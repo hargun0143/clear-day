@@ -92,4 +92,34 @@ describe("topic selectors habits and non-overlap", () => {
       }
     }
   });
+
+  it("shows only mode-neutral swaps when commute is unknown", () => {
+    const outdoor = buildFactSheet(
+      "delhi",
+      { value: 150 },
+      {
+        ...templateAnswers,
+        role: "outdoor-worker",
+        mobility: "over-5",
+      }
+    );
+    const outdoorSwaps = selectSwaps(outdoor).map((t) => t.id);
+    expect(outdoorSwaps).toEqual(["combine-errands", "never-burn-waste"]);
+    expect(outdoorSwaps).not.toContain("walking-or-cycling");
+    expect(outdoorSwaps).not.toContain("public-transit");
+
+    const homemaker = buildFactSheet(
+      "delhi",
+      { value: 150 },
+      {
+        ...templateAnswers,
+        role: "homemaker",
+        mobility: "lpg-or-induction",
+      }
+    );
+    const homemakerSwaps = selectSwaps(homemaker).map((t) => t.id);
+    expect(homemakerSwaps).toEqual(["combine-errands", "never-burn-waste"]);
+    expect(homemakerSwaps).not.toContain("walking-or-cycling");
+    expect(homemakerSwaps).not.toContain("public-transit");
+  });
 });

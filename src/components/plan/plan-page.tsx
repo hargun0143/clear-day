@@ -9,6 +9,8 @@ import { IndoorAirSection } from "@/components/plan/indoor-air-section";
 import { PlanSummaryPanel } from "@/components/plan/plan-summary-panel";
 import { SwapsSection } from "@/components/plan/swaps-section";
 import type { PlanApiMeta } from "@/services/plan-client";
+import { buildProfileChips } from "@/utils/plan/build-profile-chips";
+import type { QuestionnaireAnswers } from "@/utils/questionnaire/types";
 
 const FALLBACK_BAND = AQI_BANDS[0]!;
 
@@ -17,6 +19,7 @@ export interface PlanPageProps {
   meta: PlanApiMeta;
   aqiValue: number;
   cityId: string;
+  answers?: QuestionnaireAnswers;
   source?: string;
   isModelled?: boolean;
   onStartOver: () => void;
@@ -27,6 +30,7 @@ export const PlanPage: FC<PlanPageProps> = ({
   meta,
   aqiValue,
   cityId,
+  answers,
   source,
   isModelled,
   onStartOver,
@@ -49,6 +53,11 @@ export const PlanPage: FC<PlanPageProps> = ({
     return "CPCB via data.gov.in";
   }, [source, isModelled]);
 
+  const profileChips = useMemo(
+    () => (answers ? buildProfileChips(answers) : []),
+    [answers]
+  );
+
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8 sm:px-4">
       {meta.isFallback && (
@@ -67,6 +76,7 @@ export const PlanPage: FC<PlanPageProps> = ({
             aqiBandColor={band.color}
             cityName={cityName}
             dataSourceLabel={dataSourceLabel}
+            profileChips={profileChips}
             onStartOver={onStartOver}
           />
         </div>
