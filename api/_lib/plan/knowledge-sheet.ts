@@ -62,7 +62,7 @@ export const DEFAULT_SLOT_ACTIONS: Record<string, string[]> = {
     "Operate kitchen exhaust or keep doors closed while preparing midday meals.",
   ],
   Evening: [
-    "Wear an N95 mask if outdoor travel or errands near busy roads are necessary.",
+    "Take quieter side streets away from main roads if travelling in the evening.",
     "Keep windows sealed as evening vehicle exhaust accumulates.",
   ],
   Night: [

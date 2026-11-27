@@ -5,7 +5,8 @@ const MAX_SWAPS = 3;
 
 const KNOWN_COMMUTE_IDS = new Set([
   "walk",
-  "bicycle-or-two-wheeler",
+  "bicycle",
+  "motorbike-or-scooter",
   "bus-or-metro",
   "car",
   "auto-or-cab",
@@ -19,7 +20,6 @@ export function selectSwaps(factSheet: FactSheet): KnowledgeTopic[] {
 
   const selectedIds: string[] = [];
   const mobility = factSheet.mobilityId || "";
-  const mobLabel = factSheet.mobilityLabel.toLowerCase();
   const hasKnownCommute = KNOWN_COMMUTE_IDS.has(mobility);
 
   if (factSheet.cookingWithBiomass) {
@@ -29,36 +29,13 @@ export function selectSwaps(factSheet: FactSheet): KnowledgeTopic[] {
   if (!hasKnownCommute) {
     selectedIds.push("combine-errands", "never-burn-waste");
   } else {
-    const isWalkerOrCyclist =
-      mobility === "walk" ||
-      mobility === "bicycle-or-two-wheeler" ||
-      mobLabel.includes("walk") ||
-      mobLabel.includes("bicycle");
-
-    const isTransitUser =
-      mobility === "bus-or-metro" ||
-      mobLabel.includes("bus") ||
-      mobLabel.includes("metro");
-
-    const isMostlyIndoors =
-      mobility === "mostly-indoors" || mobLabel.includes("mostly indoors");
-
-    const isMotorizedUser =
+    const isMotorised =
       mobility === "car" ||
       mobility === "auto-or-cab" ||
-      mobility === "bicycle-or-two-wheeler" ||
-      mobLabel.includes("car") ||
-      mobLabel.includes("cab") ||
-      mobLabel.includes("two-wheeler");
+      mobility === "motorbike-or-scooter";
 
-    if (!isWalkerOrCyclist && !isMostlyIndoors) {
-      selectedIds.push("walking-or-cycling");
-    }
-    if (!isTransitUser && !isMostlyIndoors) {
-      selectedIds.push("public-transit");
-    }
-    if (isMotorizedUser) {
-      selectedIds.push("avoid-idling");
+    if (isMotorised) {
+      selectedIds.push("walking-or-cycling", "public-transit", "avoid-idling");
     }
     selectedIds.push("never-burn-waste");
   }

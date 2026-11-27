@@ -39,13 +39,13 @@ export const FACTOR_WEIGHTS: readonly FactorWeight[] = [
   {
     id: "car-or-two-wheeler",
     weight: 70,
-    label: "Car or two-wheeler commute",
+    label: "Motorised commute (car, bike or auto)",
     description:
       "Road-level vehicular travel places you directly in traffic exhaust plumes.",
     applies: (fs) =>
       fs.mobilityId === "car" ||
       fs.mobilityId === "auto-or-cab" ||
-      fs.mobilityId === "bicycle-or-two-wheeler",
+      fs.mobilityId === "motorbike-or-scooter",
   },
   {
     id: "no-purifier-with-care",

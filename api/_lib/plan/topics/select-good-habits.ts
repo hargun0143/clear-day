@@ -23,9 +23,9 @@ export function selectGoodHabits(factSheet: FactSheet): GoodHabitTopic[] {
 
   if (
     mobility === "walk" ||
-    mobility === "bicycle-or-two-wheeler" ||
-    mobLabel.includes("walk") ||
-    mobLabel.includes("bicycle")
+    mobility === "bicycle" ||
+    mobLabel === "walk" ||
+    mobLabel === "bicycle"
   ) {
     habits.push({
       id: "walk-or-cycle",

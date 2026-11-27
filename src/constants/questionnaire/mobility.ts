@@ -5,7 +5,8 @@ import type {
 
 export const DEFAULT_MOBILITY_OPTIONS: readonly QuestionOption[] = [
   { id: "walk", label: "Walk" },
-  { id: "bicycle-or-two-wheeler", label: "Bicycle or two-wheeler" },
+  { id: "bicycle", label: "Bicycle" },
+  { id: "motorbike-or-scooter", label: "Motorbike or scooter" },
   { id: "bus-or-metro", label: "Bus or metro" },
   { id: "car", label: "Car" },
   { id: "auto-or-cab", label: "Auto or cab" },

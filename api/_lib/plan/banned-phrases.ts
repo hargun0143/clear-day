@@ -34,24 +34,35 @@ function extractAllTexts(plan: GeneratedPlan): string[] {
   ];
 }
 
-export function hasBannedPhrase(text: string): boolean {
+const MASK_REGEX = /\b(?:n95|ffp2|masks?)\b/i;
+const LOW_AQI_MAX = 100;
+
+export function hasBannedPhrase(text: string, aqiValue?: number): boolean {
   const lower = text.toLowerCase();
   if (BANNED_PHRASES.some((bp) => lower.includes(bp))) return true;
-  return BANNED_REGEXES.some((rx) => rx.test(text));
+  if (BANNED_REGEXES.some((rx) => rx.test(text))) return true;
+  return (
+    aqiValue !== undefined && aqiValue <= LOW_AQI_MAX && MASK_REGEX.test(text)
+  );
 }
 
-export function findBannedPhrases(plan: GeneratedPlan): string[] {
-  const texts = extractAllTexts(plan);
+export function findBannedPhrases(
+  plan: GeneratedPlan,
+  aqiValue?: number
+): string[] {
   const found = new Set<string>();
-  for (const text of texts) {
+  const checkMask = aqiValue !== undefined && aqiValue <= LOW_AQI_MAX;
+  for (const text of extractAllTexts(plan)) {
     const lower = text.toLowerCase();
     for (const phrase of BANNED_PHRASES) {
       if (lower.includes(phrase)) found.add(phrase);
     }
     for (const rx of BANNED_REGEXES) {
-      const match = text.match(rx);
-      if (match) found.add(match[0].toLowerCase());
+      const m = text.match(rx);
+      if (m) found.add(m[0].toLowerCase());
     }
+    const maskMatch = checkMask ? text.match(MASK_REGEX) : null;
+    if (maskMatch) found.add(maskMatch[0].toLowerCase());
   }
   return [...found];
 }
@@ -103,10 +114,11 @@ export function findEquipmentViolations(plan: GeneratedPlan): string[] {
 
 export function sanitizeBannedActions(
   plan: GeneratedPlan,
-  defaultSlotActions: Record<string, string[]>
+  defaultSlotActions: Record<string, string[]>,
+  aqiValue?: number
 ): GeneratedPlan {
   const newSlots = plan.dailyPlan.map((slot) => {
-    let actions = slot.actions.filter((a) => !hasBannedPhrase(a));
+    let actions = slot.actions.filter((a) => !hasBannedPhrase(a, aqiValue));
     if (actions.length === 0) {
       const fallback = defaultSlotActions[slot.slot]?.[0];
       actions = [

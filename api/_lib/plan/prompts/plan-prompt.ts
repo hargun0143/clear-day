@@ -23,11 +23,11 @@ export function buildPlanPrompt(factSheet: FactSheet): {
   const indoorTopics = selectIndoorTopics(factSheet);
   const swaps = selectSwaps(factSheet);
   const goodHabits = selectGoodHabits(factSheet);
-  const commute = selectCommuteTopic(factSheet.mobilityId);
+  const commute = selectCommuteTopic(factSheet.mobilityId, factSheet.aqiValue);
 
   const bandStrictness =
     factSheet.aqiValue <= 100
-      ? "AQI is low: Keep plan light and reassuring; state plainly conditions are manageable."
+      ? "AQI is 100 or below (Good or Satisfactory): Keep the plan light and positive; state plainly conditions are manageable. Do NOT include any mask advice anywhere in the plan."
       : factSheet.aqiValue <= 200
         ? "AQI is moderate: Apply sensible precautions without alarming language."
         : "AQI is high: Strictly minimise outdoor exposure and prioritise indoor air quality.";
@@ -43,7 +43,7 @@ TONE & BOUNDARIES (v3.1):
 
 HEADLINE & SUMMARY (v3.1):
 5. Headline (max 80 chars) must reflect role plus biggest exposure factor, never start with "Managing", and never be generic.
-6. todaySummary (max 240 chars) must cite at least two specific facts with no medical or breathing claims.
+6. todaySummary (max 240 chars) must cite at least two specific facts with no medical or breathing claims. Headline and todaySummary must NEVER name a transport mode the person did not select.
 
 DAILY PLAN (v3.1):
 7. Morning, Afternoon, Evening MUST have 2 or 3 actions each; Night MUST have 1 or 2 actions, with at least one action about the sleeping environment or home air (e.g. sleeping-room air, AC recirculation, keeping the filter running), NEVER generic rest.

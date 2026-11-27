@@ -105,4 +105,15 @@ describe("plan-prompt v3.1", () => {
       "When outdoor AQI is 101 or above, NEVER advise opening windows or ventilating"
     );
   });
+
+  it("enforces light/positive no-mask guidance at AQI <= 100 and never naming unselected transport", () => {
+    const factSheet = buildFactSheet("delhi", { value: 80 }, baseAnswers);
+    const { systemInstruction } = buildPlanPrompt(factSheet);
+
+    expect(systemInstruction).toContain("Keep the plan light and positive");
+    expect(systemInstruction).toContain("Do NOT include any mask advice");
+    expect(systemInstruction).toContain(
+      "NEVER name a transport mode the person did not select"
+    );
+  });
 });

@@ -4,7 +4,7 @@
 
 Clear Day reads today's air quality for your Indian city from the CPCB's real-time feed, asks a few plain questions about your routine and home, and gives you a plan you can actually follow: what to do in the morning, afternoon, evening and at night, how to clean the air at home (including a do-it-yourself box-fan filter), which low-emission choices matter for you, and why each one helps.
 
-- Live app: [LIVE_URL]
+- Live app: https://clear-day-vert.vercel.app/
 - Demo video: [DEMO_VIDEO_URL]
 - Built for the PromptWars Virtual Challenge 6 (Urban Air Quality Assistant).
 

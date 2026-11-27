@@ -65,7 +65,7 @@ export async function callGeminiPlan(
     let bodyContent = userContent;
     if (isRetry && lastValidPlan) {
       const repeats = findRepeatedAdvice(lastValidPlan);
-      const banned = findBannedPhrases(lastValidPlan);
+      const banned = findBannedPhrases(lastValidPlan, factSheet.aqiValue);
       const equip = findEquipmentViolations(lastValidPlan);
       bodyContent = buildCorrectionPrompt(userContent, repeats, banned, equip);
     }
@@ -74,11 +74,9 @@ export async function callGeminiPlan(
     const result = await fetchGemini(url, apiKey, requestBody, fetchFn);
 
     if (!result.ok) {
-      const isRetryable =
-        result.status === 429 ||
-        (result.status && result.status >= 500) ||
-        !result.status;
-      if (attempt === 0 && isRetryable) {
+      const retryable =
+        !result.status || result.status === 429 || result.status >= 500;
+      if (attempt === 0 && retryable) {
         await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
         continue;
       }
@@ -101,7 +99,7 @@ export async function callGeminiPlan(
 
       if (attempt === 0) {
         const repeats = findRepeatedAdvice(covered);
-        const banned = findBannedPhrases(covered);
+        const banned = findBannedPhrases(covered, factSheet.aqiValue);
         const equip = findEquipmentViolations(covered);
         if (repeats.length > 0 || banned.length > 0 || equip.length > 0) {
           await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
@@ -127,7 +125,8 @@ export async function callGeminiPlan(
   if (lastValidPlan) {
     const sanitized = sanitizeBannedActions(
       lastValidPlan,
-      DEFAULT_SLOT_ACTIONS
+      DEFAULT_SLOT_ACTIONS,
+      factSheet.aqiValue
     );
     return { success: true, plan: sanitized };
   }
