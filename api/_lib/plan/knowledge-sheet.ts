@@ -69,11 +69,3 @@ export const DEFAULT_SLOT_ACTIONS: Record<string, string[]> = {
     "Keep the bedroom door closed to maintain a clean sleeping zone overnight.",
   ],
 };
-
-export const INDOOR_AIR_FACTS: readonly string[] = INDOOR_TOPICS.map(
-  (t) => t.detail
-);
-
-export const LOW_EMISSION_SWAPS: readonly string[] = SWAP_TOPICS.map(
-  (t) => t.detail
-);

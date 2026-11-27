@@ -1,11 +1,12 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { buildFactSheet } from "../../api/_lib/plan/build-fact-sheet.js";
-import {
-  callGeminiPlan,
-  type InjectedFetch,
-} from "../../api/_lib/plan/call-gemini.js";
+import { callGeminiPlan } from "../../api/_lib/plan/call-gemini.js";
 import { EXAMPLE_PLAN } from "../../api/_lib/plan/example-plan.js";
 import type { GeneratedPlan } from "../../api/_lib/plan/plan-schema.js";
+import {
+  createMockGeminiFetch,
+  mockGeminiJson,
+} from "./helpers/mock-gemini-fetch.js";
 
 describe("callGeminiPlan retry budget", () => {
   const factSheet = buildFactSheet(
@@ -37,19 +38,12 @@ describe("callGeminiPlan retry budget", () => {
     };
 
     let attempts = 0;
-    const mockFetch = vi.fn().mockImplementation(async () => {
+    const mockFetch = createMockGeminiFetch(async () => {
       attempts++;
-      return {
-        ok: true,
-        json: async () => ({
-          candidates: [
-            { content: { parts: [{ text: JSON.stringify(planWithRepeat) }] } },
-          ],
-        }),
-      };
+      return mockGeminiJson(planWithRepeat);
     });
 
-    const res = await callGeminiPlan(factSheet, mockFetch as InjectedFetch);
+    const res = await callGeminiPlan(factSheet, mockFetch);
     expect(res.success).toBe(true);
     expect(attempts).toBe(2);
   });
@@ -73,19 +67,12 @@ describe("callGeminiPlan retry budget", () => {
     };
 
     let attempts = 0;
-    const mockFetch = vi.fn().mockImplementation(async () => {
+    const mockFetch = createMockGeminiFetch(async () => {
       attempts++;
-      return {
-        ok: true,
-        json: async () => ({
-          candidates: [
-            { content: { parts: [{ text: JSON.stringify(planWithBanned) }] } },
-          ],
-        }),
-      };
+      return mockGeminiJson(planWithBanned);
     });
 
-    const res = await callGeminiPlan(factSheet, mockFetch as InjectedFetch);
+    const res = await callGeminiPlan(factSheet, mockFetch);
     expect(res.success).toBe(true);
     expect(attempts).toBe(2);
     if (res.success) {

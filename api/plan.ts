@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { devLog } from "./_lib/dev-log.js";
 import { readRequestBody } from "./_lib/plan/body-reader.js";
 import { buildFactSheet } from "./_lib/plan/build-fact-sheet.js";
 import {
@@ -47,11 +48,9 @@ export async function processPlanRequest(
     return { status: 400, headers, body: { error: "Invalid parameters" } };
   }
 
-  if (process.env.NODE_ENV !== "production") {
-    console.log(
-      `[plan-flags] isUnder18=${factSheet.isUnder18} vulnerableHome=${factSheet.vulnerableHome} hasBreathingOrHeartCondition=${factSheet.hasBreathingOrHeartCondition} indoorSmoking=${factSheet.indoorSmoking} hasPurifier=${factSheet.hasPurifier} hasAC=${factSheet.hasAC} hasExhaust=${factSheet.hasExhaust} cookingWithBiomass=${factSheet.cookingWithBiomass} highOutdoorHours=${factSheet.highOutdoorHours}`
-    );
-  }
+  devLog(
+    `[plan-flags] isUnder18=${factSheet.isUnder18} vulnerableHome=${factSheet.vulnerableHome} hasBreathingOrHeartCondition=${factSheet.hasBreathingOrHeartCondition} indoorSmoking=${factSheet.indoorSmoking} hasPurifier=${factSheet.hasPurifier} hasAC=${factSheet.hasAC} hasExhaust=${factSheet.hasExhaust} cookingWithBiomass=${factSheet.cookingWithBiomass} highOutdoorHours=${factSheet.highOutdoorHours}`
+  );
 
   const model = process.env.GEMINI_MODEL || GEMINI_DEFAULT_MODEL;
   const geminiRes = await callGeminiPlan(factSheet, options.fetchFn);

@@ -1,3 +1,4 @@
+import { devLog } from "../dev-log.js";
 import {
   findBannedPhrases,
   findEquipmentViolations,
@@ -116,11 +117,9 @@ export async function callGeminiPlan(
     }
   }
 
-  if (process.env.NODE_ENV !== "production") {
-    console.log(
-      `[plan-timing] durationMs=${Date.now() - startTime} attempts=${attemptsCount}`
-    );
-  }
+  devLog(
+    `[plan-timing] durationMs=${Date.now() - startTime} attempts=${attemptsCount}`
+  );
 
   if (lastValidPlan) {
     const sanitized = sanitizeBannedActions(

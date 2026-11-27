@@ -57,9 +57,8 @@ export function findBannedPhrases(
   const checkMask = aqiValue !== undefined && aqiValue <= LOW_AQI_MAX;
   for (const text of extractAllTexts(plan)) {
     const lower = text.toLowerCase();
-    for (const phrase of BANNED_PHRASES) {
+    for (const phrase of BANNED_PHRASES)
       if (lower.includes(phrase)) found.add(phrase);
-    }
     for (const rx of BANNED_REGEXES) {
       const m = text.match(rx);
       if (m) found.add(m[0].toLowerCase());

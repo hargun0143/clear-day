@@ -1,10 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { buildFactSheet } from "../../api/_lib/plan/build-fact-sheet.js";
-import {
-  callGeminiPlan,
-  type InjectedFetch,
-} from "../../api/_lib/plan/call-gemini.js";
+import { callGeminiPlan } from "../../api/_lib/plan/call-gemini.js";
 import { EXAMPLE_PLAN } from "../../api/_lib/plan/example-plan.js";
+import {
+  createMockGeminiFetch,
+  mockGeminiJson,
+} from "./helpers/mock-gemini-fetch.js";
 
 describe("callGeminiPlan transport and fallback", () => {
   const factSheet = buildFactSheet(
@@ -35,26 +36,16 @@ describe("callGeminiPlan transport and fallback", () => {
 
   it("succeeds on first 200 response and passes key in header only", async () => {
     process.env.GEMINI_API_KEY = "test-secret-key";
-
     let capturedUrl = "";
     let capturedHeaders: HeadersInit | undefined;
 
-    const mockFetch = vi
-      .fn()
-      .mockImplementation(async (url: string, init?: RequestInit) => {
-        capturedUrl = url;
-        capturedHeaders = init?.headers;
-        return {
-          ok: true,
-          json: async () => ({
-            candidates: [
-              { content: { parts: [{ text: JSON.stringify(EXAMPLE_PLAN) }] } },
-            ],
-          }),
-        };
-      });
+    const mockFetch = createMockGeminiFetch(async (url, init) => {
+      capturedUrl = url;
+      capturedHeaders = init?.headers;
+      return mockGeminiJson(EXAMPLE_PLAN);
+    });
 
-    const res = await callGeminiPlan(factSheet, mockFetch as InjectedFetch);
+    const res = await callGeminiPlan(factSheet, mockFetch);
     expect(res.success).toBe(true);
     expect(capturedUrl).not.toContain("test-secret-key");
     const headers = capturedHeaders as Record<string, string>;
@@ -65,20 +56,14 @@ describe("callGeminiPlan transport and fallback", () => {
     process.env.GEMINI_API_KEY = "test-secret-key";
     let count = 0;
 
-    const mockFetch = vi.fn().mockImplementation(async () => {
+    const mockFetch = createMockGeminiFetch(async () => {
       count++;
-      if (count === 1) return { ok: false, status: 429 };
-      return {
-        ok: true,
-        json: async () => ({
-          candidates: [
-            { content: { parts: [{ text: JSON.stringify(EXAMPLE_PLAN) }] } },
-          ],
-        }),
-      };
+      return count === 1
+        ? { ok: false, status: 429 }
+        : mockGeminiJson(EXAMPLE_PLAN);
     });
 
-    const res = await callGeminiPlan(factSheet, mockFetch as InjectedFetch);
+    const res = await callGeminiPlan(factSheet, mockFetch);
     expect(res.success).toBe(true);
     expect(count).toBe(2);
   });
@@ -89,21 +74,15 @@ describe("callGeminiPlan transport and fallback", () => {
     process.env.GEMINI_FALLBACK_MODEL = "fallback-model-flash";
 
     const urls: string[] = [];
-    const mockFetch = vi.fn().mockImplementation(async (url: string) => {
+    const mockFetch = createMockGeminiFetch(async (url) => {
       urls.push(url);
-      if (urls.length === 1) return { ok: false, status: 503 };
-      return {
-        ok: true,
-        json: async () => ({
-          candidates: [
-            { content: { parts: [{ text: JSON.stringify(EXAMPLE_PLAN) }] } },
-          ],
-        }),
-      };
+      return urls.length === 1
+        ? { ok: false, status: 503 }
+        : mockGeminiJson(EXAMPLE_PLAN);
     });
 
     try {
-      const res = await callGeminiPlan(factSheet, mockFetch as InjectedFetch);
+      const res = await callGeminiPlan(factSheet, mockFetch);
       expect(res.success).toBe(true);
       expect(urls.length).toBe(2);
       expect(urls[0]).toContain("primary-model");
@@ -115,11 +94,12 @@ describe("callGeminiPlan transport and fallback", () => {
 
   it("returns failure when two consecutive attempts fail", async () => {
     process.env.GEMINI_API_KEY = "test-secret-key";
-    const mockFetch = vi.fn().mockImplementation(async () => {
-      return { ok: false, status: 500 };
-    });
+    const mockFetch = createMockGeminiFetch(async () => ({
+      ok: false,
+      status: 500,
+    }));
 
-    const res = await callGeminiPlan(factSheet, mockFetch as InjectedFetch);
+    const res = await callGeminiPlan(factSheet, mockFetch);
     expect(res.success).toBe(false);
   });
 });

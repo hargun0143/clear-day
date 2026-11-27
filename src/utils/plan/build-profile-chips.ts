@@ -12,18 +12,13 @@ import type {
   QuestionOption,
   QuestionnaireAnswers,
 } from "@/utils/questionnaire/types";
+import { toStringList } from "@/utils/to-string-list";
 
 function findLabel(
   options: readonly QuestionOption[],
   id: string
 ): string | null {
   return options.find((opt) => opt.id === id)?.label ?? null;
-}
-
-function toStringArray(value: unknown): string[] {
-  if (Array.isArray(value)) return value.map(String);
-  if (typeof value === "string" && value.length > 0) return [value];
-  return [];
 }
 
 export function buildProfileChips(answers: QuestionnaireAnswers): string[] {
@@ -54,13 +49,13 @@ export function buildProfileChips(answers: QuestionnaireAnswers): string[] {
     }
   }
 
-  const careIds = toStringArray(answers["care"]).filter((id) => id !== "none");
+  const careIds = toStringList(answers["care"]).filter((id) => id !== "none");
   for (const id of careIds) {
     const label = findLabel(CARE_OPTIONS, id);
     if (label) chips.push(label);
   }
 
-  const setupIds = toStringArray(answers["home-setup"]).filter(
+  const setupIds = toStringList(answers["home-setup"]).filter(
     (id) => id !== "none"
   );
   for (const id of setupIds) {

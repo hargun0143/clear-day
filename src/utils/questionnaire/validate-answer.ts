@@ -3,6 +3,7 @@ import type {
   QuestionOption,
   QuestionnaireAnswers,
 } from "@/utils/questionnaire/types";
+import { toStringList } from "@/utils/to-string-list";
 
 export function getQuestionOptions(
   question: QuestionConfig,
@@ -28,8 +29,12 @@ export function isValidAnswerValue(
   }
 
   if (Array.isArray(val)) {
-    if (val.length === 0) return false;
-    return val.every((item) => typeof item === "string" && validIds.has(item));
+    const items = toStringList(val);
+    return (
+      items.length > 0 &&
+      items.length === val.length &&
+      items.every((item) => validIds.has(item))
+    );
   }
 
   return false;

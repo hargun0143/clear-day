@@ -1,9 +1,6 @@
 import { useMemo, useState, type FC } from "react";
-import { AqiCard } from "@/components/landing/aqi-card";
-import { CityPicker } from "@/components/landing/city-picker";
-import { CityStrip } from "@/components/landing/city-strip";
+import { HeroAqiPanel } from "@/components/landing/hero-aqi-panel";
 import { HeroIntro } from "@/components/landing/hero-intro";
-import { ShinyButton } from "@/components/ui/shiny-button";
 import { CITIES } from "@/constants/cities";
 import { useCityAqi } from "@/hooks/use-city-aqi";
 import {
@@ -93,68 +90,24 @@ export const Hero: FC<HeroProps> = ({
         sampleMode={sampleMode}
         capturedAt={snapshotCapturedAt}
       />
-
-      <div className="glass flex w-full flex-col space-y-5 rounded-[28px] p-6 sm:p-8">
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight text-ink sm:text-2xl">
-            Check your air
-          </h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            Choose your city to see today's reading.
-          </p>
-        </div>
-
-        <div className="space-y-1.5">
-          <CityPicker
-            selectedCityId={selectedCityId}
-            onSelectCity={onSelectCity}
-            triggerId="city-picker-trigger"
-            isError={Boolean(cityPickerError)}
-          />
-          {cityPickerError && (
-            <p
-              id="city-picker-error"
-              className="px-2 text-xs font-medium text-amber"
-              role="alert"
-            >
-              {cityPickerError}
-            </p>
-          )}
-        </div>
-
-        {selectedCity && (
-          <div className="space-y-4 pt-2">
-            <AqiCard
-              value={displayValue}
-              isManual={isManual}
-              source={activeReading?.source}
-              sampleMode={sampleMode}
-              mainPollutant={activeReading?.dominantPollutant}
-              stationsCount={stationsCount}
-              updatedTime={activeReading?.updatedAt}
-              isLoading={
-                !sampleMode && !isManual && liveAqi.status === "loading"
-              }
-              error={cardError}
-              onRetry={liveAqi.retry}
-              onManualSubmit={setManualAqi}
-            />
-            <CityStrip
-              selectedCityId={selectedCity.id}
-              onSelectCity={onSelectCity}
-              sampleMode={sampleMode}
-            />
-            <ShinyButton
-              variant="primary"
-              size="md"
-              onClick={handleStartClick}
-              className="w-full font-semibold"
-            >
-              Continue with {selectedCity.name}
-            </ShinyButton>
-          </div>
-        )}
-      </div>
+      <HeroAqiPanel
+        selectedCityId={selectedCityId}
+        selectedCity={selectedCity}
+        onSelectCity={onSelectCity}
+        cityPickerError={cityPickerError}
+        displayValue={displayValue}
+        isManual={isManual}
+        source={activeReading?.source}
+        sampleMode={sampleMode}
+        mainPollutant={activeReading?.dominantPollutant}
+        stationsCount={stationsCount}
+        updatedTime={activeReading?.updatedAt}
+        isLoading={!sampleMode && !isManual && liveAqi.status === "loading"}
+        error={cardError}
+        onRetry={liveAqi.retry}
+        onManualSubmit={setManualAqi}
+        onStartClick={handleStartClick}
+      />
     </section>
   );
 };

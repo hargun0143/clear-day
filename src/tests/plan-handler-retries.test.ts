@@ -1,8 +1,11 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { processPlanRequest } from "../../api/plan.js";
-import type { InjectedFetch } from "../../api/_lib/plan/call-gemini.js";
 import { EXAMPLE_PLAN } from "../../api/_lib/plan/example-plan.js";
 import type { GeneratedPlan } from "../../api/_lib/plan/plan-schema.js";
+import {
+  createMockGeminiFetch,
+  mockGeminiJson,
+} from "./helpers/mock-gemini-fetch.js";
 
 describe("POST /api/plan handler retries", () => {
   const validPayload = JSON.stringify({
@@ -34,21 +37,13 @@ describe("POST /api/plan handler retries", () => {
     };
 
     let callCount = 0;
-    const mockFetch = vi.fn().mockImplementation(async () => {
+    const mockFetch = createMockGeminiFetch(async () => {
       callCount++;
-      const plan = callCount === 1 ? planWithRepeat : EXAMPLE_PLAN;
-      return {
-        ok: true,
-        json: async () => ({
-          candidates: [
-            { content: { parts: [{ text: JSON.stringify(plan) }] } },
-          ],
-        }),
-      };
+      return mockGeminiJson(callCount === 1 ? planWithRepeat : EXAMPLE_PLAN);
     });
 
     const res = await processPlanRequest("POST", validPayload, {
-      fetchFn: mockFetch as InjectedFetch,
+      fetchFn: mockFetch,
     });
 
     expect(res.status).toBe(200);
@@ -72,20 +67,13 @@ describe("POST /api/plan handler retries", () => {
     };
 
     let callCount = 0;
-    const mockFetch = vi.fn().mockImplementation(async () => {
+    const mockFetch = createMockGeminiFetch(async () => {
       callCount++;
-      return {
-        ok: true,
-        json: async () => ({
-          candidates: [
-            { content: { parts: [{ text: JSON.stringify(planWithRepeat) }] } },
-          ],
-        }),
-      };
+      return mockGeminiJson(planWithRepeat);
     });
 
     const res = await processPlanRequest("POST", validPayload, {
-      fetchFn: mockFetch as InjectedFetch,
+      fetchFn: mockFetch,
     });
 
     expect(res.status).toBe(200);

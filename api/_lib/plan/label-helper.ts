@@ -1,4 +1,7 @@
+import { toStringList } from "../../../src/utils/to-string-list.js";
 import type { QuestionOption } from "../../../src/utils/questionnaire/types.js";
+
+export { toStringList };
 
 export function getOptionLabel(
   options: readonly QuestionOption[],
@@ -12,11 +15,4 @@ export function getOptionLabel(
       .join(", ");
   }
   return options.find((o) => o.id === val)?.label ?? val;
-}
-
-export function toStringList(v: unknown): string[] {
-  if (Array.isArray(v))
-    return v.filter((x): x is string => typeof x === "string");
-  if (typeof v === "string") return [v];
-  return [];
 }

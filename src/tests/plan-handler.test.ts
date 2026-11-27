@@ -1,7 +1,10 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { processPlanRequest } from "../../api/plan.js";
-import type { InjectedFetch } from "../../api/_lib/plan/call-gemini.js";
 import { EXAMPLE_PLAN } from "../../api/_lib/plan/example-plan.js";
+import {
+  createMockGeminiFetch,
+  mockGeminiJson,
+} from "./helpers/mock-gemini-fetch.js";
 
 describe("POST /api/plan handler logic", () => {
   const validPayload = JSON.stringify({
@@ -31,19 +34,12 @@ describe("POST /api/plan handler logic", () => {
 
   it("returns 200 with generated plan on Gemini success", async () => {
     process.env.GEMINI_API_KEY = "test-key";
-    const mockFetch = vi.fn().mockImplementation(async () => ({
-      ok: true,
-      json: async () => ({
-        candidates: [
-          {
-            content: { parts: [{ text: JSON.stringify(EXAMPLE_PLAN) }] },
-          },
-        ],
-      }),
-    }));
+    const mockFetch = createMockGeminiFetch(async () =>
+      mockGeminiJson(EXAMPLE_PLAN)
+    );
 
     const res = await processPlanRequest("POST", validPayload, {
-      fetchFn: mockFetch as InjectedFetch,
+      fetchFn: mockFetch,
     });
     expect(res.status).toBe(200);
     const body = res.body as Record<string, unknown>;
@@ -55,13 +51,13 @@ describe("POST /api/plan handler logic", () => {
 
   it("returns fallback plan with isFallback true when Gemini fails", async () => {
     process.env.GEMINI_API_KEY = "test-key";
-    const mockFetch = vi.fn().mockImplementation(async () => ({
+    const mockFetch = createMockGeminiFetch(async () => ({
       ok: false,
       status: 503,
     }));
 
     const res = await processPlanRequest("POST", validPayload, {
-      fetchFn: mockFetch as InjectedFetch,
+      fetchFn: mockFetch,
     });
     expect(res.status).toBe(200);
     const body = res.body as Record<string, unknown>;
