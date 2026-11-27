@@ -1,3 +1,7 @@
+import {
+  TOP_FACTOR_LABELS,
+  TOP_FACTOR_WEIGHTS,
+} from "../../../../src/constants/top-factors.js";
 import type { FactSheet } from "../fact-sheet-types.js";
 
 export interface FactorWeight {
@@ -11,35 +15,39 @@ export interface FactorWeight {
 export const FACTOR_WEIGHTS: readonly FactorWeight[] = [
   {
     id: "indoor-smoking",
-    weight: 100,
-    label: "Indoor smoking",
+    weight: TOP_FACTOR_WEIGHTS["indoor-smoking"]!,
+    label: TOP_FACTOR_LABELS["indoor-smoking"]!,
     description: "Indoor smoke adds dense, toxic particulates inside the home.",
     applies: (fs) => fs.indoorSmoking,
   },
   {
     id: "high-outdoor-hours",
-    weight: 90,
-    label: "High outdoor hours",
+    weight: TOP_FACTOR_WEIGHTS["high-outdoor-hours"]!,
+    label: TOP_FACTOR_LABELS["high-outdoor-hours"]!,
     description:
       "Extended time outdoors multiplies direct exposure to ambient particulate spikes.",
-    applies: (fs) =>
-      fs.highOutdoorHours ||
-      fs.roleLabel.toLowerCase().includes("outdoor") ||
-      fs.roleSpecificAnswerLabel.toLowerCase().includes("sport") ||
-      fs.roleSpecificAnswerLabel.toLowerCase().includes("outdoor"),
+    applies: (fs) => fs.highOutdoorHours,
+  },
+  {
+    id: "regular-outdoor-sport",
+    weight: TOP_FACTOR_WEIGHTS["regular-outdoor-sport"]!,
+    label: TOP_FACTOR_LABELS["regular-outdoor-sport"]!,
+    description:
+      "Active outdoor sports increase air intake during elevated pollution hours.",
+    applies: (fs) => fs.regularOutdoorSport,
   },
   {
     id: "biomass-cooking",
-    weight: 85,
-    label: "Wood or biomass cooking",
+    weight: TOP_FACTOR_WEIGHTS["biomass-cooking"]!,
+    label: TOP_FACTOR_LABELS["biomass-cooking"]!,
     description:
       "Solid fuel combustion releases intense indoor particle concentrations.",
     applies: (fs) => fs.cookingWithBiomass,
   },
   {
     id: "car-or-two-wheeler",
-    weight: 70,
-    label: "Motorised commute (car, bike or auto)",
+    weight: TOP_FACTOR_WEIGHTS["car-or-two-wheeler"]!,
+    label: TOP_FACTOR_LABELS["car-or-two-wheeler"]!,
     description:
       "Road-level vehicular travel places you directly in traffic exhaust plumes.",
     applies: (fs) =>
@@ -49,22 +57,20 @@ export const FACTOR_WEIGHTS: readonly FactorWeight[] = [
   },
   {
     id: "no-purifier-with-care",
-    weight: 60,
-    label: "No purifier with extra-care household members",
+    weight: TOP_FACTOR_WEIGHTS["no-purifier-with-care"]!,
+    label: TOP_FACTOR_LABELS["no-purifier-with-care"]!,
     description:
       "Household members needing care lack a mechanical filtration baseline indoors.",
     applies: (fs) => !fs.hasPurifier && fs.vulnerableHome,
   },
   {
     id: "no-exhaust-cooking",
-    weight: 50,
-    label: "No exhaust while cooking",
+    weight: TOP_FACTOR_WEIGHTS["no-exhaust-cooking"]!,
+    label: TOP_FACTOR_LABELS["no-exhaust-cooking"]!,
     description:
       "Cooking without mechanical exhaust traps culinary fumes and oils inside living spaces.",
     applies: (fs) =>
-      !fs.hasExhaust &&
-      (fs.cookingWithBiomass ||
-        fs.roleLabel.toLowerCase().includes("homemaker")),
+      !fs.hasExhaust && (fs.cookingWithBiomass || fs.roleId === "homemaker"),
   },
 ] as const;
 

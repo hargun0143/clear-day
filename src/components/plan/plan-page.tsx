@@ -86,7 +86,7 @@ export const PlanPage: FC<PlanPageProps> = ({
           <DailyPlanGrid dailyPlan={plan.dailyPlan} />
           <IndoorAirSection indoorAir={plan.indoorAir} />
           <SwapsSection choices={plan.lowEmissionChoices} />
-          <ImpactSection impact={plan.impact} />
+          <ImpactSection impact={plan.impact} aqiValue={aqiValue} />
           <p className="px-1 text-xs text-ink-muted max-w-[65ch]">
             {plan.disclaimer}
           </p>

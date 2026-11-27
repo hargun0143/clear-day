@@ -38,6 +38,35 @@ function getSectionTexts(plan: GeneratedPlan): Record<string, string> {
   };
 }
 
+const SMOKE_FREE_HOME_REGEX = /\bsmoke[- ]?free\s+home\b/gi;
+
+function findSmokeFreeRepeats(plan: GeneratedPlan): RepeatPair[] {
+  const sections: Record<string, string> = {
+    summary: `${plan.headline} ${plan.todaySummary}`,
+    dailyPlan: plan.dailyPlan.flatMap((s) => [...s.actions, s.why]).join(" "),
+    indoorAir: plan.indoorAir.tips.map((t) => t.text).join(" "),
+    lowEmissionChoices: plan.lowEmissionChoices
+      .flatMap((c) => [c.swap, c.benefit])
+      .join(" "),
+    impact: plan.impact.flatMap((i) => [i.factorId, i.effect]).join(" "),
+    goodHabits: (plan.goodHabits ?? []).map((h) => h.text).join(" "),
+  };
+
+  const hits: string[] = [];
+  for (const [sec, text] of Object.entries(sections)) {
+    const matches = text.match(SMOKE_FREE_HOME_REGEX);
+    if (matches && matches.length > 0) hits.push(sec);
+  }
+  const hasOutsideGoodHabits = hits.some((s) => s !== "goodHabits");
+  if (hits.length > 1 || (hits.length === 1 && hasOutsideGoodHabits)) {
+    return hits.map((sec) => ({
+      a: `smoke-free-home in ${sec}`,
+      b: "smoke-free-home",
+    }));
+  }
+  return [];
+}
+
 export function findRepeatedAdvice(plan: GeneratedPlan): RepeatPair[] {
   const pairs: RepeatPair[] = [];
 
@@ -92,5 +121,5 @@ export function findRepeatedAdvice(plan: GeneratedPlan): RepeatPair[] {
     }
   }
 
-  return pairs;
+  return [...pairs, ...findSmokeFreeRepeats(plan)];
 }

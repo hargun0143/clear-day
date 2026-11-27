@@ -12,6 +12,9 @@ export const BANNED_PHRASES: readonly string[] = [
   "rest well",
   "recover",
   "smooth morning",
+  "air drafts",
+  "stable sleeping environment",
+  "outdoor air drafts",
 ] as const;
 
 const BANNED_REGEXES: readonly RegExp[] = [
@@ -67,11 +70,6 @@ export function findBannedPhrases(
   return [...found];
 }
 
-function countMatches(regex: RegExp, text: string): number {
-  const matches = text.match(regex);
-  return matches ? matches.length : 0;
-}
-
 const EQUIPMENT_PATTERNS: Record<string, RegExp> = {
   purifier: /\b(?:air\s+)?purifiers?\b/gi,
   ac: /\b(?:ac|air\s+conditioners?)\b/gi,
@@ -79,6 +77,10 @@ const EQUIPMENT_PATTERNS: Record<string, RegExp> = {
   chimney: /\bchimneys?\b/gi,
   filter: /\bfilters?\b/gi,
 };
+
+function countMatches(regex: RegExp, text: string): number {
+  return text.match(regex)?.length ?? 0;
+}
 
 export function findEquipmentViolations(plan: GeneratedPlan): string[] {
   const violations: string[] = [];

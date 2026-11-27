@@ -53,22 +53,8 @@ export function buildFactSheet(
   const mobilityVal =
     typeof answers["mobility"] === "string" ? answers["mobility"] : "";
   const mobilityId = mobilityVal;
-  const cookingWithBiomass = mobilityVal === "wood-coal-or-biomass";
-  const highOutdoorHours = mobilityVal === "over-5";
-
-  const mobilityLabel = getOptionLabel(
-    getMobilityOptions(answers),
-    mobilityVal
-  );
   const roleVal = typeof answers["role"] === "string" ? answers["role"] : "";
   const roleLabel = getOptionLabel(ROLES, roleVal);
-
-  const budgetVal =
-    typeof answers["budget"] === "string" ? answers["budget"] : "";
-  const budgetId = isUnder18 ? null : budgetVal || null;
-  const budgetLabel = isUnder18
-    ? null
-    : getOptionLabel(BUDGET_OPTIONS, budgetVal);
 
   const habitVal =
     typeof answers["role-habit"] === "string" ? answers["role-habit"] : "";
@@ -76,6 +62,26 @@ export function buildFactSheet(
     getRoleHabitOptions(answers),
     habitVal
   );
+
+  const cookingWithBiomass = mobilityVal === "wood-coal-or-biomass";
+  const highOutdoorHours =
+    roleVal === "outdoor-worker" && mobilityVal === "over-5";
+  const regularOutdoorSport =
+    (roleVal === "school-student" && habitVal === "regularly") ||
+    (roleVal === "college-student" &&
+      (habitVal === "hostel-sports" || habitVal === "day-scholar-sports"));
+
+  const mobilityLabel = getOptionLabel(
+    getMobilityOptions(answers),
+    mobilityVal
+  );
+
+  const budgetVal =
+    typeof answers["budget"] === "string" ? answers["budget"] : "";
+  const budgetId = isUnder18 ? null : budgetVal || null;
+  const budgetLabel = isUnder18
+    ? null
+    : getOptionLabel(BUDGET_OPTIONS, budgetVal);
 
   const partialSheet = {
     cityName,
@@ -93,9 +99,12 @@ export function buildFactSheet(
     hasExhaust,
     cookingWithBiomass,
     highOutdoorHours,
+    regularOutdoorSport,
     mobilityId,
     mobilityLabel,
+    roleId: roleVal,
     roleLabel,
+    roleHabitId: habitVal,
     budgetId,
     budgetLabel,
     roleSpecificAnswerLabel,

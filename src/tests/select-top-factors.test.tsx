@@ -51,26 +51,41 @@ describe("selectTopFactors", () => {
     expect(factors).toEqual([]);
   });
 
-  it("prioritizes high outdoor hours and biomass cooking according to weight table", () => {
-    const answers: QuestionnaireAnswers = {
-      city: "patna",
-      role: "outdoor-worker",
-      age: "18-59",
-      care: ["none"],
-      mobility: "wood-coal-or-biomass",
-      "home-setup": ["none"],
-      "role-habit": "regularly",
-      budget: "under-1000",
-    };
+  it("prioritizes high outdoor hours for outdoor-worker over-5 and biomass cooking for homemaker", () => {
+    const outdoorSheet = buildFactSheet(
+      "patna",
+      { value: 310 },
+      {
+        city: "patna",
+        role: "outdoor-worker",
+        age: "18-59",
+        care: ["none"],
+        mobility: "over-5",
+        "home-setup": ["none"],
+        "role-habit": "none",
+        budget: "under-1000",
+      }
+    );
+    expect(selectTopFactors(outdoorSheet)).toEqual(["high-outdoor-hours"]);
 
-    const sheet = buildFactSheet("patna", { value: 310 }, answers);
-    const factors = selectTopFactors(sheet);
-
-    expect(factors).toContain("high-outdoor-hours");
-    expect(factors).toContain("biomass-cooking");
-    expect(factors).toContain("no-exhaust-cooking");
-    expect(factors[0]).toBe("high-outdoor-hours");
-    expect(factors[1]).toBe("biomass-cooking");
+    const homemakerSheet = buildFactSheet(
+      "patna",
+      { value: 310 },
+      {
+        city: "patna",
+        role: "homemaker",
+        age: "18-59",
+        care: ["none"],
+        mobility: "wood-coal-or-biomass",
+        "home-setup": ["none"],
+        "role-habit": "dry-sweep",
+        budget: "under-1000",
+      }
+    );
+    expect(selectTopFactors(homemakerSheet)).toEqual([
+      "biomass-cooking",
+      "no-exhaust-cooking",
+    ]);
   });
 
   it("maps every factor id in FACTOR_WEIGHTS and renders plain labels in UI", () => {

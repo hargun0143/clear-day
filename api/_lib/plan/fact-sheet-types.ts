@@ -22,9 +22,12 @@ export interface FactSheet {
   hasExhaust: boolean;
   cookingWithBiomass: boolean;
   highOutdoorHours: boolean;
+  regularOutdoorSport: boolean;
   mobilityId: string;
   mobilityLabel: string;
+  roleId: string;
   roleLabel: string;
+  roleHabitId: string;
   budgetId: string | null;
   budgetLabel: string | null;
   roleSpecificAnswerLabel: string;

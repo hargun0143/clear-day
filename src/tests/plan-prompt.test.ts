@@ -18,9 +18,9 @@ const baseAnswers: QuestionnaireAnswers = {
   budget: "nothing-diy-only",
 };
 
-describe("plan-prompt v3.1", () => {
-  it('exports PROMPT_VERSION as "v3.1"', () => {
-    expect(PROMPT_VERSION).toBe("v3.1");
+describe("plan-prompt v3.2", () => {
+  it('exports PROMPT_VERSION as "v3.2"', () => {
+    expect(PROMPT_VERSION).toBe("v3.2");
   });
 
   it("contains the AQI value, band, and guidance without free-text user fields", () => {
@@ -79,15 +79,19 @@ describe("plan-prompt v3.1", () => {
     expect(FORBIDDEN_IN_DAILY_PLAN).toContain("windows-closed");
   });
 
-  it("includes selectedTopics for indoorAir, swaps, goodHabits, and commute", () => {
+  it("includes selectedTopics for indoorAir, swaps, goodHabits, commute, and roleHabit", () => {
     const factSheet = buildFactSheet("delhi", { value: 150 }, baseAnswers);
-    const { userContent } = buildPlanPrompt(factSheet);
+    const { systemInstruction, userContent } = buildPlanPrompt(factSheet);
 
     expect(userContent).toContain('"selectedTopics"');
     expect(userContent).toContain('"indoorAir"');
     expect(userContent).toContain('"swaps"');
     expect(userContent).toContain('"goodHabits"');
     expect(userContent).toContain('"commute"');
+    expect(userContent).toContain('"roleHabit"');
+    expect(systemInstruction).toContain(
+      '"smoke-free home" may ONLY appear once'
+    );
   });
 
   it("forbids instructing user to check local air quality reports", () => {

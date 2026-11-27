@@ -1,6 +1,31 @@
 # Prompt Log: Plan Generation
 
-## v3.1 (Current) — `api/_lib/plan/prompts/plan-prompt.ts`
+## v3.2 (Current) — `api/_lib/plan/prompts/plan-prompt.ts`
+
+### Problems observed in v3.1 output
+
+1. **Ambiguous bicycle/two-wheeler option:** Combining bicycle and motorised two-wheeler caused plans to mix cycling and engine/idling advice.
+2. **Mask advice at Satisfactory AQI:** Mask recommendations appeared when outdoor AQI was 100 or below.
+3. **Impact explanations missing:** The impact section lost its plain-language explanations under each factor label.
+4. **Sport answer ignored:** School and college students' outdoor sport answers were either ignored or mislabelled as "Long hours outdoors".
+5. **Same habit repeated in three places:** "Smoke-free home" was repeated across good habits, summary/daily actions, and indoor air.
+6. **Filler lines about drafts:** Generic phrases such as "air drafts", "stable sleeping environment", and "outdoor air drafts" appeared in daily slots.
+
+### Changes made
+
+1. **Split mobility options:** Separated `"bicycle-or-two-wheeler"` into `"bicycle"` and `"motorbike-or-scooter"`, restricting motorised swaps and motorised impact factor to `car`, `auto-or-cab`, and `motorbike-or-scooter`.
+2. **AQI-gated mask advice & positive low-AQI tone:** Gated mask topics (`bus-or-metro`, `bicycle`, `motorbike-or-scooter`, `outdoor-worker`) strictly to AQI ≥ 101, banned mask mentions at AQI ≤ 100, and instructed Good/Satisfactory plans to stay light and positive.
+3. **Impact chips + plain explanations:** Computed exposure level chips (`High`, `Moderate`, `Low`) in code from a documented weight table and AQI, restored one non-repetitive explanation sentence per factor from Gemini, and added the `"Contribution to your exposure today"` legend.
+4. **Role-specific daily topics & sport factor:** Added `selectRoleTopic` covering every question 7 option (outdoor sports, senior morning walks, outdoor-worker masks, office/WFH/homemaker routines) and added a separate `"Regular outdoor sport"` factor so students are never labelled `"Long hours outdoors"`.
+5. **Cross-section repetition & filler bans:** Restricted `"smoke-free home"` to `goodHabits` only (checked in `findRepeatedAdvice` and prompt), added `"air drafts"`, `"stable sleeping environment"`, and `"outdoor air drafts"` to `BANNED_PHRASES`, and banned unselected transport modes in headline/summary.
+
+### Changes after testing
+
+_(Placeholder for future iterations and calibration observations)_
+
+---
+
+## v3.1 (Archived) — `api/_lib/plan/prompts/plan-prompt.ts`
 
 ### Problems observed in v3 output
 

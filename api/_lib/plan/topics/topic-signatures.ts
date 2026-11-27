@@ -31,4 +31,5 @@ export const TOPIC_KEYWORDS: Record<string, string[]> = {
     "clean cooking fuel",
     "biomass fuel",
   ],
+  "smoke-free-home": ["smoke-free home", "smoke free home"],
 };
