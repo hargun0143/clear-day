@@ -95,7 +95,7 @@ The prompt and how it changed over time are documented in [`docs/prompt-log.md`]
 - API keys live only in server-side environment variables (no `VITE_` prefix) and are never sent to the browser, logged, or returned in any response.
 - The server accepts only known city ids and validates every input; request bodies are size-limited.
 - Upstream errors are never leaked to the client.
-- `npm audit` flags advisories in a dev-time build-tool dependency (picomatch). They affect local tooling only and are not part of the production bundle. The suggested automatic fix would downgrade the bundler, so it has not been applied.
+- `npm audit` reports 0 known vulnerabilities at the time of submission.
 
 ## Tech stack
 
